@@ -1,31 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Crimson+Pro:wght@400;600;700&family=Montserrat:wght@500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-    --foreground-rgb: 0, 0, 0;
-    --background-start-rgb: 250, 250, 250;
-    --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --foreground-rgb: 255, 255, 255;
-        --background-start-rgb: 0, 0, 0;
-        --background-end-rgb: 0, 0, 0;
-    }
+    --noise-opacity: 0.03;
+    --glow-cyan: 0 0 20px rgba(8, 239, 247, 0.4), 0 0 40px rgba(8, 239, 247, 0.2);
+    --glow-apricot: 0 0 15px rgba(224, 128, 31, 0.5), 0 0 30px rgba(224, 128, 31, 0.3);
 }
 
 body {
-    color: rgb(var(--foreground-rgb));
-    background: linear-gradient(to bottom,
-            transparent,
-            rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+    background: #08121b;
+    color: #e0ebe7;
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
 }
 
+/* Noise texture overlay */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Neon glow utilities */
 @layer utilities {
-    .text-balance {
-        text-wrap: balance;
+    .text-glow-cyan {
+        text-shadow: var(--glow-cyan);
+    }
+
+    .text-glow-apricot {
+        text-shadow: var(--glow-apricot);
+    }
+
+    .border-glow-cyan {
+        box-shadow: var(--glow-cyan);
+    }
+
+    .border-glow-apricot {
+        box-shadow: var(--glow-apricot);
     }
 }
