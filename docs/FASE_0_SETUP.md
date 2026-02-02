@@ -142,23 +142,6 @@ volumes:
   mongo_data:
 ```
 
-#### Opción B: Local (Desarrollo)
-
-```bash
-# Linux
-sudo apt install mongodb-org
-sudo systemctl start mongod
-
-# Crear usuario de desarrollo
-mongosh
-> use bandpulse
-> db.createUser({
-    user: "dev_user",
-    pwd: "dev_password",
-    roles: ["readWrite"]
-  })
-```
-
 #### Script de inicialización de índices
 
 ```javascript

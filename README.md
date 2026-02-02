@@ -147,3 +147,81 @@ The MVP focuses on **read-only aggregation and monitoring**, not transactions.
 ---
 
 BandPulse aims to become the *live music radar* for fans — always on, quietly watching the scene, and tapping you on the shoulder when something matters.
+
+---
+
+## Development Setup
+
+### Prerequisites
+
+- Node.js 20+ LTS
+- Docker and Docker Compose
+- npm
+
+### Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd band-pulse
+   ```
+
+2. **Start MongoDB**
+   ```bash
+   docker compose up -d
+   ```
+
+3. **Setup Backend**
+   ```bash
+   cd backend
+   cp .env.example .env
+   npm install
+   npm run dev
+   ```
+   Backend will run at http://localhost:3001
+
+4. **Setup Frontend** (in a new terminal)
+   ```bash
+   cd frontend
+   cp .env.local.example .env.local
+   npm install
+   npm run dev
+   ```
+   Frontend will run at http://localhost:3000
+
+### Available Scripts
+
+**Backend:**
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Compile TypeScript
+- `npm start` - Run compiled JavaScript
+
+**Frontend:**
+- `npm run dev` - Start Next.js development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Project Structure
+
+```
+band-pulse/
+├── backend/                 # Node.js + Express API
+│   ├── src/
+│   │   ├── config/         # Environment & database config
+│   │   ├── middleware/     # Express middleware
+│   │   └── utils/          # Utilities (logger, etc.)
+│   └── package.json
+├── frontend/               # Next.js application
+│   ├── app/               # App Router pages
+│   ├── lib/               # Utility functions
+│   ├── types/             # TypeScript definitions
+│   └── package.json
+├── scripts/               # Database initialization scripts
+├── docs/                  # Implementation phase documentation
+└── docker-compose.yml     # MongoDB container
+```
+
+### Documentation
+
+See [docs/README.md](docs/README.md) for detailed implementation phases.
