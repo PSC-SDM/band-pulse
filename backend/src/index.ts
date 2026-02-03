@@ -5,6 +5,9 @@ import { connectDatabase, getDatabase } from './config/database';
 import { env } from './config/env';
 import { errorHandler } from './middleware/error.middleware';
 import { logger } from './utils/logger';
+import { passport } from './config/oauth';
+import { authRoutes } from './routes/auth.routes';
+import { usersRoutes } from './routes/users.routes';
 
 const app: Express = express();
 
@@ -22,6 +25,9 @@ app.use(
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Initialize Passport
+app.use(passport.initialize());
 
 // Request logging in development
 if (env.NODE_ENV === 'development') {
@@ -61,6 +67,12 @@ app.get('/api', (_req: Request, res: Response) => {
         documentation: '/api/docs',
     });
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// User routes
+app.use('/api/users', usersRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
