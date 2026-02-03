@@ -5,141 +5,357 @@ import { Icon } from '@iconify/react';
 
 export default function Home() {
     return (
-        <main className="relative min-h-screen overflow-hidden bg-deep-space-950">
-            {/* Animated background gradients */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse-glow" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-apricot-500/20 rounded-full blur-[120px] animate-pulse-glow"
-                    style={{ animationDelay: '1s' }} />
-                <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-deep-space-600/30 rounded-full blur-[100px] animate-pulse-glow"
-                    style={{ animationDelay: '0.5s' }} />
-            </div>
-
-            {/* Diagonal accent line */}
-            <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-cyan-500 via-apricot-500 to-transparent opacity-40 transform rotate-12 origin-top-right" />
-
-            <div className="relative z-10 flex min-h-screen flex-col">
-                {/* Header */}
-                <header className="px-6 py-6 md:px-12 animate-slide-up">
-                    <div className="flex items-center justify-between max-w-7xl mx-auto">
-                        <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-apricot-500 rounded-lg border-glow-cyan flex items-center justify-center">
-                                <Icon icon="mdi:guitar-electric" className="text-3xl text-deep-space-950" />
-                            </div>
-                            <span className="font-display text-2xl text-cyan-400 tracking-tight">BANDPULSE</span>
+        <main className="min-h-screen bg-night">
+            {/* Header */}
+            <header className="fixed top-0 left-0 right-0 z-50 bg-night/90 backdrop-blur-sm border-b border-prussian">
+                <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-prussian rounded flex items-center justify-center">
+                            <Icon icon="mdi:pulse" className="text-lg text-orange" />
                         </div>
-                        <Link
-                            href="/login"
-                            className="px-6 py-2 border-2 border-cyan-500 text-cyan-400 font-button font-semibold hover:bg-cyan-500 hover:text-deep-space-950 transition-all duration-300 border-glow-cyan tracking-wide"
-                        >
-                            Sign In
-                        </Link>
+                        <span className="font-display text-sm tracking-wider text-white">
+                            BANDPULSE
+                        </span>
                     </div>
-                </header>
+                    <Link
+                        href="/login"
+                        className="font-body text-sm text-alabaster hover:text-white transition-colors"
+                    >
+                        Sign in
+                    </Link>
+                </div>
+            </header>
 
-                {/* Hero Section */}
-                <section className="flex-1 flex items-center px-6 md:px-12 pb-20">
-                    <div className="max-w-7xl mx-auto w-full">
-                        <div className="grid lg:grid-cols-2 gap-12 items-center">
-                            {/* Left Column - Main Content */}
-                            <div className="space-y-8 animate-slide-in">
+            {/* Hero Section */}
+            <section className="relative min-h-screen flex items-center bg-gradient-to-b from-night via-prussian/20 to-night">
+                <div className="max-w-6xl mx-auto px-6 pt-24 pb-16 w-full">
+                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                        {/* Left: Core Message */}
+                        <div className="space-y-8 opacity-0 animate-fade-up">
+                            <div className="space-y-4">
+                                <p className="font-display text-xs tracking-[0.3em] text-alabaster uppercase">
+                                    Your live music radar
+                                </p>
+                                <h1 className="font-accent text-5xl md:text-6xl lg:text-7xl text-white leading-[0.95]">
+                                    Follow once.<br />
+                                    <span className="text-alabaster">Never miss</span><br />
+                                    a show.
+                                </h1>
+                            </div>
+                            
+                            <p className="font-body text-lg text-alabaster leading-relaxed max-w-md">
+                                BandPulse watches the live music scene so you don't have to. 
+                                Add your favorite artists and we'll tap you on the shoulder 
+                                when something matters.
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                                <Link
+                                    href="/register"
+                                    className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-orange text-night font-body font-semibold hover:bg-orange-light transition-colors"
+                                >
+                                    Start tracking
+                                    <Icon icon="mdi:arrow-right" className="text-lg" />
+                                </Link>
+                                <Link
+                                    href="#how-it-works"
+                                    className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border border-alabaster/30 text-white font-body hover:border-alabaster/60 transition-colors"
+                                >
+                                    How it works
+                                </Link>
+                            </div>
+
+                            <p className="font-body text-sm text-alabaster/60">
+                                Free to use · No credit card required
+                            </p>
+                        </div>
+
+                        {/* Right: Visual Element */}
+                        <div className="hidden lg:block opacity-0 animate-fade-up stagger-2">
+                            <div className="relative">
+                                {/* Notification Preview Cards */}
                                 <div className="space-y-4">
-                                    <h1 className="font-display text-7xl md:text-8xl lg:text-9xl leading-none text-cyan-400 text-glow-cyan uppercase tracking-tighter">
-                                        NEVER<br />
-                                        MISS A<br />
-                                        SHOW
-                                    </h1>
-                                    <div className="h-1 w-32 bg-gradient-to-r from-apricot-500 to-transparent border-glow-apricot" />
-                                </div>
-
-                                <p className="font-body text-xl md:text-2xl text-ash-200 leading-relaxed max-w-xl">
-                                    Track your favorite bands. Get instant alerts when they announce tours near you.
-                                    From underground gigs to stadium shows — <span className="text-apricot-400 font-semibold">all in one place</span>.
-                                </p>
-
-                                <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                                    <Link
-                                        href="/login"
-                                        className="group px-10 py-4 bg-gradient-to-r from-cyan-500 to-cyan-600 text-deep-space-950 font-button font-bold text-lg hover:from-cyan-400 hover:to-cyan-500 transition-all duration-300 border-glow-cyan relative overflow-hidden tracking-wide"
-                                    >
-                                        <span className="relative z-10">START TRACKING</span>
-                                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                                    </Link>
-                                    <button className="px-10 py-4 border-2 border-ash-600 text-ash-200 font-button font-semibold text-lg hover:border-ash-400 hover:text-ash-100 transition-all duration-300 tracking-wide">
-                                        HOW IT WORKS
-                                    </button>
-                                </div>
-
-                                <p className="text-ash-500 text-sm font-body">
-                                    Free forever • No credit card required
-                                </p>
-                            </div>
-
-                            {/* Right Column - Feature Cards */}
-                            <div className="space-y-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                                {/* Card 1 */}
-                                <div className="group bg-deep-space-900/80 backdrop-blur-sm border-l-4 border-cyan-500 p-6 hover:bg-deep-space-800/80 transition-all duration-300 hover:translate-x-2">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-12 h-12 bg-cyan-500/20 flex items-center justify-center border border-cyan-500/50 group-hover:border-glow-cyan transition-all">
-                                            <Icon icon="mdi:target" className="text-3xl text-cyan-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display text-2xl text-cyan-400 mb-2 uppercase tracking-tight">FOLLOW ARTISTS</h3>
-                                            <p className="font-body text-ash-300 leading-relaxed">
-                                                Add your favorite bands and we'll monitor their every move — new tour dates, venue changes, everything.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Card 2 */}
-                                <div className="group bg-deep-space-900/80 backdrop-blur-sm border-l-4 border-apricot-500 p-6 hover:bg-deep-space-800/80 transition-all duration-300 hover:translate-x-2"
-                                    style={{ animationDelay: '0.4s' }}>
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-12 h-12 bg-apricot-500/20 flex items-center justify-center border border-apricot-500/50 group-hover:border-glow-apricot transition-all">
-                                            <Icon icon="mdi:map-marker-radius" className="text-3xl text-apricot-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display text-2xl text-apricot-400 mb-2 uppercase tracking-tight">SET YOUR RADIUS</h3>
-                                            <p className="font-body text-ash-300 leading-relaxed">
-                                                Drop a pin, set your range. We'll only notify you about shows you can actually get to.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Card 3 */}
-                                <div className="group bg-deep-space-900/80 backdrop-blur-sm border-l-4 border-deep-space-500 p-6 hover:bg-deep-space-800/80 transition-all duration-300 hover:translate-x-2"
-                                    style={{ animationDelay: '0.5s' }}>
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-12 h-12 bg-deep-space-500/20 flex items-center justify-center border border-deep-space-500/50">
-                                            <Icon icon="mdi:bell-ring" className="text-3xl text-deep-space-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="font-display text-2xl text-deep-space-400 mb-2 uppercase tracking-tight">INSTANT ALERTS</h3>
-                                            <p className="font-body text-ash-300 leading-relaxed">
-                                                The second a show drops, you'll know. Beat the bots, grab your tickets, secure the spot.
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <NotificationCard
+                                        type="new"
+                                        artist="Radiohead"
+                                        message="New tour announced · 12 dates in Europe"
+                                        time="Just now"
+                                    />
+                                    <NotificationCard
+                                        type="reminder"
+                                        artist="The National"
+                                        message="Concert in Barcelona · 3 days away"
+                                        time="2h ago"
+                                        className="translate-x-8"
+                                    />
+                                    <NotificationCard
+                                        type="alert"
+                                        artist="Arcade Fire"
+                                        message="New date added near you · Madrid"
+                                        time="Yesterday"
+                                        className="translate-x-4"
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
+            </section>
 
-                {/* Footer */}
-                <footer className="px-6 py-6 border-t border-deep-space-800">
-                    <div className="max-w-7xl mx-auto flex justify-between items-center text-ash-600 font-body text-sm">
-                        <p>© 2026 BandPulse. Built for the live music obsessed.</p>
-                        <div className="flex gap-6">
-                            <button className="hover:text-cyan-400 transition-colors">Privacy</button>
-                            <button className="hover:text-cyan-400 transition-colors">Terms</button>
-                            <button className="hover:text-cyan-400 transition-colors">Contact</button>
+            {/* How It Works */}
+            <section id="how-it-works" className="py-24 bg-prussian">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="max-w-2xl mb-16 opacity-0 animate-fade-up">
+                        <p className="font-display text-xs tracking-[0.3em] text-alabaster/60 uppercase mb-4">
+                            How it works
+                        </p>
+                        <h2 className="font-accent text-4xl md:text-5xl text-white leading-tight">
+                            Set it and forget it
+                        </h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        <StepCard
+                            number="01"
+                            title="Follow artists"
+                            description="Search for your favorite bands and artists. Add them to your watchlist with a single tap."
+                        />
+                        <StepCard
+                            number="02"
+                            title="Set your location"
+                            description="Tell us where you are. We'll focus on concerts you can actually get to—local, national, or across Europe."
+                        />
+                        <StepCard
+                            number="03"
+                            title="Get notified"
+                            description="When something happens—a new tour, a date near you, a show approaching—we'll let you know."
+                        />
+                    </div>
+                </div>
+            </section>
+
+            {/* Value Props */}
+            <section className="py-24 bg-night">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="grid lg:grid-cols-2 gap-16 items-start">
+                        <div className="opacity-0 animate-fade-up">
+                            <p className="font-display text-xs tracking-[0.3em] text-alabaster/60 uppercase mb-4">
+                                The problem
+                            </p>
+                            <h2 className="font-accent text-3xl md:text-4xl text-white leading-tight mb-6">
+                                Live music is fragmented
+                            </h2>
+                            <p className="font-body text-lg text-alabaster leading-relaxed">
+                                Tour announcements scattered across platforms. Dates you discover 
+                                too late. Shows you didn't know existed until they sold out. 
+                                The scene moves fast and information is everywhere—except where 
+                                you need it.
+                            </p>
+                        </div>
+
+                        <div className="opacity-0 animate-fade-up stagger-2">
+                            <p className="font-display text-xs tracking-[0.3em] text-alabaster/60 uppercase mb-4">
+                                The solution
+                            </p>
+                            <h2 className="font-accent text-3xl md:text-4xl text-white leading-tight mb-6">
+                                One place. Always watching.
+                            </h2>
+                            <p className="font-body text-lg text-alabaster leading-relaxed">
+                                BandPulse aggregates concert data continuously. We monitor your 
+                                artists, track changes, and surface what's relevant. No more 
+                                manual searching. No more FOMO. Just a quiet radar that speaks 
+                                up when it matters.
+                            </p>
                         </div>
                     </div>
-                </footer>
-            </div>
+                </div>
+            </section>
+
+            {/* Features Grid */}
+            <section className="py-24 bg-prussian/50">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="text-center max-w-2xl mx-auto mb-16 opacity-0 animate-fade-up">
+                        <h2 className="font-accent text-4xl md:text-5xl text-white leading-tight mb-4">
+                            Built for music fans
+                        </h2>
+                        <p className="font-body text-lg text-alabaster">
+                            Everything you need to stay connected to the live scene.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <FeatureCard
+                            icon="mdi:account-music"
+                            title="Artist tracking"
+                            description="Follow unlimited artists. From stadium headliners to underground acts."
+                        />
+                        <FeatureCard
+                            icon="mdi:map-marker-radius"
+                            title="Geographic filtering"
+                            description="Local shows, national tours, European dates—you decide what's relevant."
+                        />
+                        <FeatureCard
+                            icon="mdi:bell-outline"
+                            title="Smart notifications"
+                            description="Alerts for new tours, added dates, approaching shows, and status changes."
+                        />
+                        <FeatureCard
+                            icon="mdi:refresh"
+                            title="Continuous monitoring"
+                            description="We check sources regularly. New information surfaces automatically."
+                        />
+                        <FeatureCard
+                            icon="mdi:calendar-check"
+                            title="Event details"
+                            description="Date, venue, city, availability status—all the info you need at a glance."
+                        />
+                        <FeatureCard
+                            icon="mdi:lightning-bolt"
+                            title="Instant updates"
+                            description="The moment something changes, you'll know. Beat the rush."
+                        />
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="py-24 bg-night">
+                <div className="max-w-3xl mx-auto px-6 text-center opacity-0 animate-fade-up">
+                    <h2 className="font-accent text-4xl md:text-5xl text-white leading-tight mb-6">
+                        Ready to stop missing shows?
+                    </h2>
+                    <p className="font-body text-lg text-alabaster mb-8 max-w-xl mx-auto">
+                        Join BandPulse and let your live music radar do the work. 
+                        Follow your first artist in seconds.
+                    </p>
+                    <Link
+                        href="/register"
+                        className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-orange text-night font-body font-semibold text-lg hover:bg-orange-light transition-colors"
+                    >
+                        Get started free
+                        <Icon icon="mdi:arrow-right" className="text-xl" />
+                    </Link>
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="py-8 bg-prussian border-t border-prussian-light">
+                <div className="max-w-6xl mx-auto px-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 bg-night rounded flex items-center justify-center">
+                                <Icon icon="mdi:pulse" className="text-xs text-orange" />
+                            </div>
+                            <span className="font-display text-xs tracking-wider text-alabaster">
+                                BANDPULSE
+                            </span>
+                        </div>
+                        <nav className="flex items-center gap-6">
+                            <Link href="/privacy" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
+                                Privacy
+                            </Link>
+                            <Link href="/terms" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
+                                Terms
+                            </Link>
+                            <Link href="/contact" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
+                                Contact
+                            </Link>
+                        </nav>
+                        <p className="font-body text-sm text-alabaster/40">
+                            © 2026 BandPulse
+                        </p>
+                    </div>
+                </div>
+            </footer>
         </main>
+    );
+}
+
+// Components
+
+function NotificationCard({
+    type,
+    artist,
+    message,
+    time,
+    className = '',
+}: {
+    type: 'new' | 'reminder' | 'alert';
+    artist: string;
+    message: string;
+    time: string;
+    className?: string;
+}) {
+    const isUrgent = type === 'new' || type === 'alert';
+    
+    return (
+        <div className={`bg-prussian border border-prussian-light p-4 ${className}`}>
+            <div className="flex items-start gap-3">
+                <div className={`w-2 h-2 rounded-full mt-2 ${isUrgent ? 'bg-orange animate-pulse-subtle' : 'bg-alabaster/40'}`} />
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-body font-semibold text-white truncate">
+                            {artist}
+                        </span>
+                        <span className="font-display text-[10px] tracking-wider text-alabaster/40 uppercase whitespace-nowrap">
+                            {time}
+                        </span>
+                    </div>
+                    <p className="font-body text-sm text-alabaster">
+                        {message}
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function StepCard({
+    number,
+    title,
+    description,
+}: {
+    number: string;
+    title: string;
+    description: string;
+}) {
+    return (
+        <div className="opacity-0 animate-fade-up stagger-2">
+            <div className="mb-4">
+                <span className="font-display text-xs tracking-[0.2em] text-orange">
+                    {number}
+                </span>
+            </div>
+            <h3 className="font-body font-semibold text-xl text-white mb-3">
+                {title}
+            </h3>
+            <p className="font-body text-alabaster leading-relaxed">
+                {description}
+            </p>
+        </div>
+    );
+}
+
+function FeatureCard({
+    icon,
+    title,
+    description,
+}: {
+    icon: string;
+    title: string;
+    description: string;
+}) {
+    return (
+        <div className="bg-prussian border border-prussian-light p-6 hover:border-alabaster/20 transition-colors">
+            <div className="w-10 h-10 bg-night rounded flex items-center justify-center mb-4">
+                <Icon icon={icon} className="text-xl text-white" />
+            </div>
+            <h3 className="font-body font-semibold text-lg text-white mb-2">
+                {title}
+            </h3>
+            <p className="font-body text-sm text-alabaster leading-relaxed">
+                {description}
+            </p>
+        </div>
     );
 }
