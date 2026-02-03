@@ -61,18 +61,33 @@ body {
 }
 
 @layer utilities {
+
     /* Stagger animation delays */
-    .stagger-1 { animation-delay: 0.1s; }
-    .stagger-2 { animation-delay: 0.2s; }
-    .stagger-3 { animation-delay: 0.3s; }
-    .stagger-4 { animation-delay: 0.4s; }
-    .stagger-5 { animation-delay: 0.5s; }
-    
+    .stagger-1 {
+        animation-delay: 0.1s;
+    }
+
+    .stagger-2 {
+        animation-delay: 0.2s;
+    }
+
+    .stagger-3 {
+        animation-delay: 0.3s;
+    }
+
+    .stagger-4 {
+        animation-delay: 0.4s;
+    }
+
+    .stagger-5 {
+        animation-delay: 0.5s;
+    }
+
     /* Orange accent utilities - controlled use per Style Guide */
     .accent-border {
         border-left: 3px solid var(--orange);
     }
-    
+
     .accent-underline {
         text-decoration: underline;
         text-decoration-color: var(--orange);

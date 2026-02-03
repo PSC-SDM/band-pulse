@@ -42,10 +42,10 @@ export default function Home() {
                                     a show.
                                 </h1>
                             </div>
-                            
+
                             <p className="font-body text-lg text-alabaster leading-relaxed max-w-md">
-                                BandPulse watches the live music scene so you don't have to. 
-                                Add your favorite artists and we'll tap you on the shoulder 
+                                BandPulse watches the live music scene so you don't have to.
+                                Add your favorite artists and we'll tap you on the shoulder
                                 when something matters.
                             </p>
 
@@ -146,9 +146,9 @@ export default function Home() {
                                 Live music is fragmented
                             </h2>
                             <p className="font-body text-lg text-alabaster leading-relaxed">
-                                Tour announcements scattered across platforms. Dates you discover 
-                                too late. Shows you didn't know existed until they sold out. 
-                                The scene moves fast and information is everywhere—except where 
+                                Tour announcements scattered across platforms. Dates you discover
+                                too late. Shows you didn't know existed until they sold out.
+                                The scene moves fast and information is everywhere—except where
                                 you need it.
                             </p>
                         </div>
@@ -161,9 +161,9 @@ export default function Home() {
                                 One place. Always watching.
                             </h2>
                             <p className="font-body text-lg text-alabaster leading-relaxed">
-                                BandPulse aggregates concert data continuously. We monitor your 
-                                artists, track changes, and surface what's relevant. No more 
-                                manual searching. No more FOMO. Just a quiet radar that speaks 
+                                BandPulse aggregates concert data continuously. We monitor your
+                                artists, track changes, and surface what's relevant. No more
+                                manual searching. No more FOMO. Just a quiet radar that speaks
                                 up when it matters.
                             </p>
                         </div>
@@ -225,7 +225,7 @@ export default function Home() {
                         Ready to stop missing shows?
                     </h2>
                     <p className="font-body text-lg text-alabaster mb-8 max-w-xl mx-auto">
-                        Join BandPulse and let your live music radar do the work. 
+                        Join BandPulse and let your live music radar do the work.
                         Follow your first artist in seconds.
                     </p>
                     <Link
@@ -287,7 +287,7 @@ function NotificationCard({
     className?: string;
 }) {
     const isUrgent = type === 'new' || type === 'alert';
-    
+
     return (
         <div className={`bg-prussian border border-prussian-light p-4 ${className}`}>
             <div className="flex items-start gap-3">
