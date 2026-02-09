@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, AuthRequest } from '../middleware/auth.middleware';
+import { authenticate, AuthRequest } from '../shared/middleware/auth.middleware';
 import { UserRepository } from '../repositories/user.repository';
 import { z } from 'zod';
 

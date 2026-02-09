@@ -1,16 +1,58 @@
 services:
+  # ---------- MongoDB ----------
   mongodb:
     image: mongo:7
     container_name: bandpulse-mongo
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: bandpulse
-      MONGO_INITDB_ROOT_PASSWORD: dev_password
-      MONGO_INITDB_DATABASE: bandpulse
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     volumes:
       - mongo_data:/data/db
       - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ---------- Backend (Express + TypeScript) ----------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bandpulse-backend
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    env_file: .env
+    environment:
+      PORT: 3001
+      MONGODB_URI: ${MONGODB_URI}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ---------- Frontend (Next.js) ----------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
+    container_name: bandpulse-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    env_file: .env
+    environment:
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
