@@ -9,39 +9,10 @@ export default function Home() {
     const isAuthenticated = status === 'authenticated';
 
     return (
-        <main className="min-h-screen bg-night">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-night/90 backdrop-blur-sm border-b border-prussian">
-                <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-prussian rounded flex items-center justify-center">
-                            <Icon icon="mdi:pulse" className="text-lg text-orange" />
-                        </div>
-                        <span className="font-display text-sm tracking-wider text-white">
-                            BANDPULSE
-                        </span>
-                    </div>
-                    {isAuthenticated ? (
-                        <Link
-                            href="/dashboard"
-                            className="font-body text-sm px-4 py-2 bg-orange text-night font-semibold rounded hover:bg-orange-light transition-colors"
-                        >
-                            Dashboard
-                        </Link>
-                    ) : (
-                        <Link
-                            href="/login"
-                            className="font-body text-sm text-alabaster hover:text-white transition-colors"
-                        >
-                            Sign in
-                        </Link>
-                    )}
-                </div>
-            </header>
-
+        <div className="bg-night">
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center bg-gradient-to-b from-night via-prussian/20 to-night">
-                <div className="max-w-6xl mx-auto px-6 pt-24 pb-16 w-full">
+            <section className="relative min-h-[calc(100vh-73px)] flex items-center bg-gradient-to-b from-night via-prussian/20 to-night">
+                <div className="max-w-6xl mx-auto px-6 py-16 w-full">
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         {/* Left: Core Message */}
                         <div className="space-y-8 opacity-0 animate-fade-up">
@@ -57,8 +28,8 @@ export default function Home() {
                             </div>
 
                             <p className="font-body text-lg text-alabaster leading-relaxed max-w-md">
-                                BandPulse watches the live music scene so you don't have to.
-                                Add your favorite artists and we'll tap you on the shoulder
+                                BandPulse watches the live music scene so you don&apos;t have to.
+                                Add your favorite artists and we&apos;ll tap you on the shoulder
                                 when something matters.
                             </p>
 
@@ -86,7 +57,6 @@ export default function Home() {
                         {/* Right: Visual Element */}
                         <div className="hidden lg:block opacity-0 animate-fade-up stagger-2">
                             <div className="relative">
-                                {/* Notification Preview Cards */}
                                 <div className="space-y-4">
                                     <NotificationCard
                                         type="new"
@@ -160,7 +130,7 @@ export default function Home() {
                             </h2>
                             <p className="font-body text-lg text-alabaster leading-relaxed">
                                 Tour announcements scattered across platforms. Dates you discover
-                                too late. Shows you didn't know existed until they sold out.
+                                too late. Shows you didn&apos;t know existed until they sold out.
                                 The scene moves fast and information is everywhere—except where
                                 you need it.
                             </p>
@@ -175,7 +145,7 @@ export default function Home() {
                             </h2>
                             <p className="font-body text-lg text-alabaster leading-relaxed">
                                 BandPulse aggregates concert data continuously. We monitor your
-                                artists, track changes, and surface what's relevant. No more
+                                artists, track changes, and surface what&apos;s relevant. No more
                                 manual searching. No more FOMO. Just a quiet radar that speaks
                                 up when it matters.
                             </p>
@@ -250,37 +220,7 @@ export default function Home() {
                     </Link>
                 </div>
             </section>
-
-            {/* Footer */}
-            <footer className="py-8 bg-prussian border-t border-prussian-light">
-                <div className="max-w-6xl mx-auto px-6">
-                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 bg-night rounded flex items-center justify-center">
-                                <Icon icon="mdi:pulse" className="text-xs text-orange" />
-                            </div>
-                            <span className="font-display text-xs tracking-wider text-alabaster">
-                                BANDPULSE
-                            </span>
-                        </div>
-                        <nav className="flex items-center gap-6">
-                            <Link href="/privacy" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
-                                Privacy
-                            </Link>
-                            <Link href="/terms" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
-                                Terms
-                            </Link>
-                            <Link href="/contact" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
-                                Contact
-                            </Link>
-                        </nav>
-                        <p className="font-body text-sm text-alabaster/40">
-                            © 2026 BandPulse
-                        </p>
-                    </div>
-                </div>
-            </footer>
-        </main>
+        </div>
     );
 }
 

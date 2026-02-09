@@ -42,6 +42,7 @@ export default function LocationPicker({
 
         async function initMap() {
             const L = (await import('leaflet')).default;
+            // @ts-ignore - CSS import manejado por el bundler
             await import('leaflet/dist/leaflet.css');
 
             if (!mounted || !mapContainerRef.current) return;

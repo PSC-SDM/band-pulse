@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 // Importar dinámicamente para evitar SSR issues con Leaflet
@@ -99,7 +100,7 @@ export default function LocationSettingsPage() {
 
     if (status === 'loading' || loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-night">
+            <div className="min-h-[60vh] flex items-center justify-center bg-night">
                 <div className="text-center">
                     <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange border-r-transparent" />
                     <p className="mt-4 text-alabaster font-body">Loading...</p>
@@ -110,28 +111,20 @@ export default function LocationSettingsPage() {
 
     const currentPosition: [number, number] = userData?.location
         ? [userData.location.coordinates[1], userData.location.coordinates[0]]
-        : [40.4168, -3.7038]; // Madrid por defecto
+        : [40.4168, -3.7038];
 
     return (
-        <div className="min-h-screen bg-night">
-            {/* Header */}
-            <nav className="bg-prussian border-b border-alabaster/10">
-                <div className="mx-auto max-w-4xl px-4 py-4 flex justify-between items-center">
-                    <button
-                        onClick={() => router.push('/dashboard')}
-                        className="flex items-center gap-2 text-alabaster/70 hover:text-orange transition-colors font-body"
-                    >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
+        <div className="bg-night min-h-[calc(100vh-73px-65px)]">
+            <div className="mx-auto max-w-4xl px-6 py-8">
+                {/* Breadcrumb */}
+                <nav className="flex items-center gap-2 text-sm font-body mb-8">
+                    <Link href="/dashboard" className="text-alabaster/50 hover:text-orange transition-colors">
                         Dashboard
-                    </button>
-                    <h1 className="text-xl font-accent text-white">BandPulse</h1>
-                </div>
-            </nav>
+                    </Link>
+                    <span className="text-alabaster/30">/</span>
+                    <span className="text-alabaster">Set Location</span>
+                </nav>
 
-            {/* Content */}
-            <div className="mx-auto max-w-4xl px-4 py-8">
                 <div className="mb-8">
                     <h1 className="text-3xl font-accent text-white">Set Your Location</h1>
                     <p className="mt-2 text-alabaster/60 font-body">
