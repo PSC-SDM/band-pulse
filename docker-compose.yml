@@ -25,6 +25,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: deps
     container_name: bandpulse-backend
     ports:
       - "${BACKEND_PORT:-3001}:3001"
@@ -32,6 +33,10 @@ services:
     environment:
       PORT: 3001
       MONGODB_URI: ${MONGODB_URI}
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/tsconfig.json:/app/tsconfig.json
+    command: npm run dev
     depends_on:
       mongodb:
         condition: service_healthy
@@ -42,6 +47,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: deps
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
     container_name: bandpulse-frontend
@@ -51,6 +57,18 @@ services:
     environment:
       PORT: 3000
       HOSTNAME: "0.0.0.0"
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api}
+      API_URL_INTERNAL: http://backend:3001/api
+    volumes:
+      - ./frontend/app:/app/app
+      - ./frontend/components:/app/components
+      - ./frontend/lib:/app/lib
+      - ./frontend/types:/app/types
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js
+      - ./frontend/postcss.config.js:/app/postcss.config.js
+      - ./frontend/next.config.js:/app/next.config.js
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+    command: npm run dev
     depends_on:
       - backend
     restart: unless-stopped

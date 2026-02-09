@@ -91,6 +91,56 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// Social login (para NextAuth - encuentra o crea usuario por email de proveedor OAuth)
+const socialLoginSchema = z.object({
+    email: z.string().email('Invalid email format'),
+    name: z.string().min(1, 'Name is required'),
+    avatar: z.string().optional(),
+    provider: z.string().min(1, 'Provider is required'),
+    providerId: z.string().min(1, 'Provider ID is required'),
+});
+
+router.post('/social', async (req, res) => {
+    try {
+        const { email, name, avatar, provider, providerId } = socialLoginSchema.parse(req.body);
+
+        // Buscar usuario existente por email
+        let user = await userRepository.findByEmail(email);
+
+        if (!user) {
+            // Crear usuario nuevo con datos del proveedor OAuth
+            user = await userRepository.create({
+                email,
+                name,
+                avatar,
+                oauthProvider: provider,
+                oauthId: providerId,
+            });
+        }
+
+        // Generar JWT del backend
+        const token = generateToken({
+            userId: user._id!.toString(),
+            email: user.email,
+        });
+
+        res.json({
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+                avatar: user.avatar,
+            },
+        });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return res.status(400).json({ error: error.errors[0].message });
+        }
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Iniciar OAuth con Google
 router.get(
     '/google',

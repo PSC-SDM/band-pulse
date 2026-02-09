@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
 export default function RegisterPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
@@ -38,7 +40,8 @@ export default function RegisterPage() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+            // 1. Registrar usuario en el backend
+            const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -55,10 +58,21 @@ export default function RegisterPage() {
                 return;
             }
 
-            // Guardar token en localStorage
-            localStorage.setItem('bandpulse_token', data.token);
+            // 2. Crear sesión NextAuth con las mismas credenciales
+            const result = await signIn('credentials', {
+                email: formData.email,
+                password: formData.password,
+                redirect: false,
+            });
 
-            // Redirigir al dashboard
+            if (result?.error) {
+                // Si falla el signIn, al menos el usuario está registrado
+                setError('Account created. Please sign in manually.');
+                setTimeout(() => router.push('/login'), 2000);
+                return;
+            }
+
+            // 3. Redirigir al dashboard
             router.push('/dashboard');
         } catch (err) {
             setError('Network error. Please try again.');
@@ -69,7 +83,7 @@ export default function RegisterPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-night">
-            <div className="w-full max-w-md rounded-lg bg-prussian-blue p-8 shadow-2xl border border-alabaster/10">
+            <div className="w-full max-w-md rounded-lg bg-prussian p-8 shadow-2xl border border-alabaster/10">
                 <h1 className="mb-2 text-center text-3xl font-accent text-white">
                     Create Account
                 </h1>
@@ -167,7 +181,7 @@ export default function RegisterPage() {
                         <div className="w-full border-t border-alabaster/20"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-prussian-blue text-alabaster/60 font-body">Or continue with</span>
+                        <span className="px-2 bg-prussian text-alabaster/60 font-body">Or continue with</span>
                     </div>
                 </div>
 

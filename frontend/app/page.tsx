@@ -2,8 +2,12 @@
 
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
+    const { status } = useSession();
+    const isAuthenticated = status === 'authenticated';
+
     return (
         <main className="min-h-screen bg-night">
             {/* Header */}
@@ -17,12 +21,21 @@ export default function Home() {
                             BANDPULSE
                         </span>
                     </div>
-                    <Link
-                        href="/login"
-                        className="font-body text-sm text-alabaster hover:text-white transition-colors"
-                    >
-                        Sign in
-                    </Link>
+                    {isAuthenticated ? (
+                        <Link
+                            href="/dashboard"
+                            className="font-body text-sm px-4 py-2 bg-orange text-night font-semibold rounded hover:bg-orange-light transition-colors"
+                        >
+                            Dashboard
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="font-body text-sm text-alabaster hover:text-white transition-colors"
+                        >
+                            Sign in
+                        </Link>
+                    )}
                 </div>
             </header>
 
@@ -51,10 +64,10 @@ export default function Home() {
 
                             <div className="flex flex-col sm:flex-row gap-4 pt-2">
                                 <Link
-                                    href="/register"
+                                    href={isAuthenticated ? '/dashboard' : '/register'}
                                     className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-orange text-night font-body font-semibold hover:bg-orange-light transition-colors"
                                 >
-                                    Start tracking
+                                    {isAuthenticated ? 'Go to Dashboard' : 'Start tracking'}
                                     <Icon icon="mdi:arrow-right" className="text-lg" />
                                 </Link>
                                 <Link
@@ -229,10 +242,10 @@ export default function Home() {
                         Follow your first artist in seconds.
                     </p>
                     <Link
-                        href="/register"
+                        href={isAuthenticated ? '/dashboard' : '/register'}
                         className="inline-flex items-center justify-center gap-2 px-10 py-4 bg-orange text-night font-body font-semibold text-lg hover:bg-orange-light transition-colors"
                     >
-                        Get started free
+                        {isAuthenticated ? 'Go to Dashboard' : 'Get started free'}
                         <Icon icon="mdi:arrow-right" className="text-xl" />
                     </Link>
                 </div>

@@ -18,23 +18,18 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+            const result = await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                setError(data.error || 'Login failed');
+            if (result?.error) {
+                setError(result.error);
                 return;
             }
 
-            // Guardar token en localStorage
-            localStorage.setItem('bandpulse_token', data.token);
-
-            // Redirigir al dashboard
+            // Login exitoso, redirigir al dashboard
             router.push('/dashboard');
         } catch (err) {
             setError('Network error. Please try again.');
@@ -45,7 +40,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-night">
-            <div className="w-full max-w-md rounded-lg bg-prussian-blue p-8 shadow-2xl border border-alabaster/10">
+            <div className="w-full max-w-md rounded-lg bg-prussian p-8 shadow-2xl border border-alabaster/10">
                 <h1 className="mb-2 text-center text-3xl font-accent text-white">
                     BandPulse
                 </h1>
@@ -109,7 +104,7 @@ export default function LoginPage() {
                         <div className="w-full border-t border-alabaster/20"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-prussian-blue text-alabaster/60 font-body">Or continue with</span>
+                        <span className="px-2 bg-prussian text-alabaster/60 font-body">Or continue with</span>
                     </div>
                 </div>
 
@@ -142,7 +137,7 @@ export default function LoginPage() {
                 {/* Links */}
                 <div className="mt-6 text-center space-y-2">
                     <p className="text-sm text-alabaster/60 font-body">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/register" className="text-orange hover:text-orange/80 transition-colors">
                             Sign up
                         </Link>
