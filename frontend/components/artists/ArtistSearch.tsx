@@ -136,7 +136,6 @@ export default function ArtistSearch({ token, onFollowChange }: ArtistSearchProp
         <div
             ref={containerRef}
             className="relative w-full"
-            style={{ isolation: 'isolate' }}
             onKeyDown={handleKeyDown}
         >
             {/* Search Input */}
@@ -217,8 +216,7 @@ export default function ArtistSearch({ token, onFollowChange }: ArtistSearchProp
                     className="absolute left-0 right-0 mt-2 
                              bg-night border border-alabaster/20 rounded-xl
                              shadow-2xl shadow-black/80
-                             overflow-hidden"
-                    style={{ zIndex: 9999 }}
+                             overflow-hidden z-[100]"
                 >
                     {/* Header */}
                     <div className="px-4 py-3 border-b border-alabaster/10 bg-prussian/50">
@@ -313,8 +311,7 @@ export default function ArtistSearch({ token, onFollowChange }: ArtistSearchProp
                 <div
                     className="absolute left-0 right-0 mt-2 
                              bg-night border border-alabaster/20 rounded-xl
-                             p-6 text-center shadow-2xl shadow-black/80"
-                    style={{ zIndex: 9999 }}
+                             p-6 text-center shadow-2xl shadow-black/80 z-[100]"
                 >
                     <div className="text-alabaster/30 mb-2">
                         <svg className="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">

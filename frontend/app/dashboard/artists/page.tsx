@@ -102,7 +102,7 @@ export default function ArtistsPage() {
                 </header>
 
                 {/* Search Section */}
-                <section className="mb-12 opacity-0 animate-fade-up stagger-2"
+                <section className="mb-12 opacity-0 animate-fade-up stagger-2 relative z-50"
                     style={{ animationFillMode: 'forwards' }}>
                     <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-orange/5 via-transparent to-orange/5 
@@ -123,7 +123,7 @@ export default function ArtistsPage() {
                 </section>
 
                 {/* Following Section */}
-                <section className="opacity-0 animate-fade-up stagger-3"
+                <section className="opacity-0 animate-fade-up stagger-3 relative z-10"
                     style={{ animationFillMode: 'forwards' }}>
                     <div className="flex items-center justify-between mb-6">
                         <h2 className="text-xl font-display uppercase tracking-wider text-white">
