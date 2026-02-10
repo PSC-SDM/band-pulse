@@ -62,6 +62,7 @@ services:
     volumes:
       - ./frontend/app:/app/app
       - ./frontend/components:/app/components
+      - ./frontend/hooks:/app/hooks
       - ./frontend/lib:/app/lib
       - ./frontend/types:/app/types
       - ./frontend/tailwind.config.js:/app/tailwind.config.js

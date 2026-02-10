@@ -8,6 +8,7 @@ import { logger } from './shared/utils/logger';
 import { passport } from './config/oauth';
 import { authRoutes } from './routes/auth.routes';
 import { usersRoutes } from './routes/users.routes';
+import { artistsRoutes } from './routes/artists.routes';
 
 const app: Express = express();
 
@@ -73,6 +74,9 @@ app.use('/api/auth', authRoutes);
 
 // User routes
 app.use('/api/users', usersRoutes);
+
+// Artist routes
+app.use('/api/artists', artistsRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

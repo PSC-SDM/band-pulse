@@ -18,8 +18,9 @@ db.users.createIndex({ oauthId: 1, oauthProvider: 1 });
 // Colección artists
 db.artists.createIndex({ slug: 1 }, { unique: true });
 db.artists.createIndex({ name: "text" });
-db.artists.createIndex({ "externalIds.spotify": 1 }, { sparse: true });
-db.artists.createIndex({ "externalIds.bandsintown": 1 }, { sparse: true });
+db.artists.createIndex({ "externalIds.musicbrainz": 1 }, { unique: true, sparse: true }); // Primary identity source
+db.artists.createIndex({ "externalIds.spotify": 1 }, { sparse: true }); // Future enrichment
+db.artists.createIndex({ "externalIds.bandsintown": 1 }, { sparse: true }); // Future enrichment
 db.artists.createIndex({ lastFetchedAt: 1 });
 
 // Colección events

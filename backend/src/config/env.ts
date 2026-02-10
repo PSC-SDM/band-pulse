@@ -24,6 +24,9 @@ const envSchema = z.object({
     SPOTIFY_CLIENT_SECRET: z.string().optional(),
     BANDSINTOWN_APP_ID: z.string().default('bandpulse'),
 
+    // MusicBrainz API (required for artist identity)
+    MUSICBRAINZ_USER_AGENT: z.string().default('BandPulse/1.0.0 (https://bandpulse.com)'),
+
     // Cache TTL (in seconds)
     ARTIST_CACHE_TTL: z.string().transform(Number).default('604800'),
     EVENT_CACHE_TTL: z.string().transform(Number).default('86400'),
