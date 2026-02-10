@@ -12,29 +12,57 @@ export default function Footer() {
     if (hideOnRoutes.includes(pathname)) return null;
 
     return (
-        <footer className="py-8 bg-prussian border-t border-prussian-light/50">
-            <div className="max-w-6xl mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="w-6 h-6 bg-night rounded flex items-center justify-center">
-                            <Icon icon="mdi:pulse" className="text-xs text-orange" />
-                        </div>
-                        <span className="font-display text-xs tracking-wider text-alabaster">
-                            BANDPULSE
-                        </span>
-                    </Link>
-                    <nav className="flex items-center gap-6">
-                        <Link href="/privacy" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
+        <footer className="relative py-12 bg-prussian border-t border-prussian-light/30 overflow-hidden">
+            {/* Background accent */}
+            <div className="absolute inset-0 opacity-30">
+                <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-night/50 rounded-full blur-3xl" />
+            </div>
+
+            <div className="relative max-w-7xl mx-auto px-6">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                    {/* Logo and tagline */}
+                    <div className="flex flex-col gap-3">
+                        <Link href="/" className="flex items-center gap-3 group">
+                            <div className="w-8 h-8 bg-night flex items-center justify-center
+                                          group-hover:bg-night/80 transition-colors">
+                                <Icon icon="mdi:pulse" className="text-sm text-orange" />
+                            </div>
+                            <span className="font-display text-xs tracking-[0.15em] text-alabaster">
+                                BANDPULSE
+                            </span>
+                        </Link>
+                        <p className="font-body text-xs text-alabaster/40 max-w-xs">
+                            Your live music radar. Never miss a concert again.
+                        </p>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="flex items-center gap-8">
+                        <Link 
+                            href="/privacy" 
+                            className="group flex items-center gap-2 font-body text-sm text-alabaster/50 hover:text-white transition-colors"
+                        >
+                            <div className="w-1 h-1 bg-alabaster/30 group-hover:bg-orange transition-colors" />
                             Privacy
                         </Link>
-                        <Link href="/terms" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
+                        <Link 
+                            href="/terms" 
+                            className="group flex items-center gap-2 font-body text-sm text-alabaster/50 hover:text-white transition-colors"
+                        >
+                            <div className="w-1 h-1 bg-alabaster/30 group-hover:bg-orange transition-colors" />
                             Terms
                         </Link>
-                        <Link href="/contact" className="font-body text-sm text-alabaster/60 hover:text-white transition-colors">
+                        <Link 
+                            href="/contact" 
+                            className="group flex items-center gap-2 font-body text-sm text-alabaster/50 hover:text-white transition-colors"
+                        >
+                            <div className="w-1 h-1 bg-alabaster/30 group-hover:bg-orange transition-colors" />
                             Contact
                         </Link>
                     </nav>
-                    <p className="font-body text-sm text-alabaster/40">
+
+                    {/* Copyright */}
+                    <p className="font-display text-[10px] tracking-wider text-alabaster/30 uppercase">
                         &copy; {new Date().getFullYear()} BandPulse
                     </p>
                 </div>

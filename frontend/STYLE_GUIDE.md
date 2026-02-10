@@ -14,11 +14,13 @@ Hex: `#000000`
 **Intent**  
 Night context, stage, backstage, visual silence.
 
-**Allowed usage**  
-Primary backgrounds in dark mode  
-Loading screens  
-Overlays  
-Hero sections  
+<!-- **Allowed usage**  
+Secondary backgrounds  
+Cards  
+Headers  
+Sidebars  
+Tables  
+Persistent containers   -->
 
 **Restrictions**  
 Do not use for long-form text  
@@ -32,13 +34,20 @@ Hex: `#14213D`
 **Intent**  
 Structure, reliability, system, stability.
 
-**Allowed usage**  
+<!-- **Allowed usage**  
 Secondary backgrounds  
 Cards  
 Headers  
 Sidebars  
 Tables  
-Persistent containers  
+Persistent containers   -->
+
+
+**Allowed usage**  
+Primary backgrounds in dark mode  
+Loading screens  
+Overlays  
+Hero sections  
 
 **Restrictions**  
 Do not use for alerts  
@@ -53,10 +62,11 @@ Hex: `#FFFFFF`
 Content, cognitive focus, readability.
 
 **Allowed usage**  
-Primary text on dark backgrounds  
-Light-mode screens  
-Forms  
-Long reading experiences  
+Secondary backgrounds in light mode  
+Dividers  
+Borders  
+Disabled states  
+Skeleton loaders  
 
 **Restrictions**  
 Do not use as a CTA  
@@ -70,12 +80,12 @@ Hex: `#E5E5E5`
 **Intent**  
 Visual rest, separation, neutrality.
 
+
 **Allowed usage**  
-Secondary backgrounds in light mode  
-Dividers  
-Borders  
-Disabled states  
-Skeleton loaders  
+Primary text on dark backgrounds  
+Light-mode screens  
+Forms  
+Long reading experiences  
 
 **Restrictions**  
 Do not use for primary text  

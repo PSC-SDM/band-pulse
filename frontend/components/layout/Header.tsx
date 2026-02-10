@@ -16,53 +16,62 @@ export default function Header() {
     if (hideOnRoutes.includes(pathname)) return null;
 
     return (
-        <header className="sticky top-0 z-50 bg-night/90 backdrop-blur-sm border-b border-prussian-light/50">
-            <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <header className="sticky top-0 z-50 bg-night/95 backdrop-blur-md border-b border-prussian-light/30">
+            <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2.5 group">
-                    <div className="w-8 h-8 bg-prussian rounded flex items-center justify-center group-hover:bg-prussian-light transition-colors">
-                        <Icon icon="mdi:pulse" className="text-lg text-orange" />
+                <Link href="/" className="flex items-center gap-3 group">
+                    <div className="relative w-9 h-9 bg-prussian flex items-center justify-center overflow-hidden
+                                  group-hover:bg-prussian-light transition-colors duration-300">
+                        <Icon icon="mdi:pulse" className="text-lg text-orange relative z-10" />
+                        {/* Hover effect */}
+                        <div className="absolute bottom-0 left-0 w-full h-0 bg-orange/10 group-hover:h-full transition-all duration-300" />
                     </div>
-                    <span className="font-display text-sm tracking-wider text-white">
+                    <span className="font-display text-sm tracking-[0.15em] text-white">
                         BANDPULSE
                     </span>
                 </Link>
 
                 {/* Navigation */}
-                <nav className="flex items-center gap-5">
+                <nav className="flex items-center gap-6">
                     {isLoading ? (
-                        <div className="h-5 w-20 bg-prussian-light rounded animate-pulse" />
+                        <div className="h-5 w-20 bg-prussian-light/50 animate-pulse" />
                     ) : isAuthenticated ? (
                         <>
                             {/* Link al dashboard (solo si NO estamos ya en dashboard) */}
                             {!pathname.startsWith('/dashboard') && (
                                 <Link
                                     href="/dashboard"
-                                    className="font-body text-sm text-alabaster/70 hover:text-white transition-colors"
+                                    className="group flex items-center gap-2 font-body text-sm text-alabaster/70 hover:text-white transition-colors"
                                 >
-                                    Dashboard
+                                    <span>Dashboard</span>
+                                    <div className="w-0 h-px bg-orange group-hover:w-4 transition-all duration-300" />
                                 </Link>
                             )}
 
                             {/* Email del usuario */}
-                            <span className="hidden sm:block font-body text-sm text-alabaster/50">
+                            <span className="hidden sm:block font-body text-xs text-alabaster/40 border-l border-prussian-light/50 pl-6">
                                 {session?.user?.email}
                             </span>
 
                             {/* Logout */}
                             <button
                                 onClick={() => signOut({ callbackUrl: '/' })}
-                                className="font-body text-sm px-4 py-2 rounded bg-prussian-light text-alabaster hover:text-white hover:bg-prussian border border-alabaster/10 hover:border-alabaster/20 transition-colors"
+                                className="group flex items-center gap-2 font-body text-sm px-4 py-2 
+                                         bg-prussian/50 text-alabaster/70 border-l-2 border-transparent
+                                         hover:text-white hover:border-orange hover:bg-prussian
+                                         transition-all duration-300"
                             >
-                                Logout
+                                <span>Logout</span>
+                                <Icon icon="mdi:logout" className="text-base opacity-0 group-hover:opacity-100 transition-opacity" />
                             </button>
                         </>
                     ) : (
                         <Link
                             href="/login"
-                            className="font-body text-sm text-alabaster hover:text-white transition-colors"
+                            className="group flex items-center gap-2 font-body text-sm text-alabaster hover:text-orange transition-colors"
                         >
-                            Sign in
+                            <span>Sign in</span>
+                            <Icon icon="mdi:arrow-right" className="text-base opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                         </Link>
                     )}
                 </nav>
