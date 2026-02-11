@@ -55,6 +55,21 @@ export async function searchEvents(
 }
 
 /**
+ * Explore all music events in an area (no artist filter).
+ */
+export async function exploreEvents(
+    token: string,
+    lng: number,
+    lat: number,
+    radiusKm: number
+): Promise<EventResponse[]> {
+    return fetchWithAuth<EventResponse[]>(
+        `/events/explore?lng=${lng}&lat=${lat}&radiusKm=${radiusKm}`,
+        token
+    );
+}
+
+/**
  * Get upcoming events for a specific artist.
  */
 export async function getArtistEvents(

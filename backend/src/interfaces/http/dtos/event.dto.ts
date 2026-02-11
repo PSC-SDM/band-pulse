@@ -23,6 +23,8 @@ export interface EventResponse {
     status: string;
     ticketUrl?: string;
     dataSource: string;
+    soldOut?: boolean;
+    inventoryStatus?: 'available' | 'few' | 'soldout' | 'unknown';
 }
 
 /**
@@ -46,5 +48,7 @@ export function toEventResponse(event: Event): EventResponse {
         status: event.status,
         ticketUrl: event.ticketUrl,
         dataSource: event.dataSource,
+        soldOut: event.soldOut ?? false,
+        inventoryStatus: event.inventoryStatus ?? 'unknown',
     };
 }

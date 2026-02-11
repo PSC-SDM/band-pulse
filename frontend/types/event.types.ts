@@ -25,4 +25,6 @@ export interface EventResponse {
     status: string;
     ticketUrl?: string;
     dataSource: string;
+    soldOut?: boolean;
+    inventoryStatus?: 'available' | 'few' | 'soldout' | 'unknown';
 }

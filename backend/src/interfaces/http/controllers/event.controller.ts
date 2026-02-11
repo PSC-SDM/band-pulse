@@ -67,6 +67,35 @@ export class EventController {
     };
 
     /**
+     * GET /events/explore?lng=X&lat=Y&radiusKm=Z
+     * Explore all music events in an area (no artist filter).
+     */
+    explore = async (req: AuthRequest, res: Response) => {
+        try {
+            const validation = searchEventsQuerySchema.safeParse(req.query);
+
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: 'Invalid query parameters. Required: lng, lat, radiusKm',
+                    details: validation.error.errors,
+                });
+            }
+
+            const { lng, lat, radiusKm } = validation.data;
+
+            const events = await this.eventService.exploreEvents(lng, lat, radiusKm);
+
+            res.json(events.map(toEventResponse));
+        } catch (error) {
+            logger.error('Explore events error', {
+                error: error instanceof Error ? error.message : 'Unknown error',
+                userId: req.user?.userId,
+            });
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    };
+
+    /**
      * GET /events/artist/:artistId
      * Get upcoming events for a specific artist.
      */

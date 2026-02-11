@@ -39,6 +39,12 @@ export interface Event {
     /** External ID from the data source */
     externalId: string;
 
+    /** Whether the event is sold out (from Inventory Status API) */
+    soldOut?: boolean;
+
+    /** Inventory status: 'available' | 'few' | 'soldout' | 'unknown' */
+    inventoryStatus?: 'available' | 'few' | 'soldout' | 'unknown';
+
     createdAt: Date;
     updatedAt: Date;
 

@@ -125,6 +125,39 @@ export default function DashboardPage() {
                             <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-500" />
                         </a>
 
+                        {/* Explore card */}
+                        <a
+                            href="/dashboard/explore"
+                            className="group relative overflow-hidden bg-prussian/60 backdrop-blur-sm p-6 md:p-8
+                                       border-l-2 border-transparent hover:border-orange
+                                       transition-all duration-500 opacity-0 animate-fade-up stagger-3"
+                        >
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                <div className="absolute -right-16 -bottom-16 w-32 h-32 bg-orange/5 rotate-12" />
+                            </div>
+
+                            <div className="relative flex items-start gap-5">
+                                <div className="w-12 h-12 bg-night/60 flex items-center justify-center flex-shrink-0
+                                              group-hover:bg-orange/10 transition-colors duration-300">
+                                    <Icon icon="mdi:compass-outline" className="text-xl text-alabaster/60 group-hover:text-orange transition-colors" />
+                                </div>
+
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-lg font-accent text-white group-hover:text-orange transition-colors">
+                                            Explore
+                                        </h3>
+                                        <Icon icon="mdi:chevron-right" className="text-lg text-alabaster/30 group-hover:text-orange group-hover:translate-x-1 transition-all" />
+                                    </div>
+                                    <p className="text-sm text-alabaster/50 font-body">
+                                        Browse all upcoming concerts in any area, from any artist
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-500" />
+                        </a>
+
                         {/* Notifications card */}
                         <a
                             href="/dashboard/settings"

@@ -24,12 +24,20 @@ const envSchema = z.object({
     SPOTIFY_CLIENT_SECRET: z.string().optional(),
     BANDSINTOWN_APP_ID: z.string().default('bandpulse'),
 
+    // Ticketmaster Discovery API
+    TICKETMASTER_API_KEY: z.string().min(1, 'Ticketmaster API key is required'),
+    TICKETMASTER_API_SECRET: z.string().optional(),
+
     // MusicBrainz API (required for artist identity)
     MUSICBRAINZ_USER_AGENT: z.string().default('BandPulse/1.0.0 (https://bandpulse.com)'),
 
     // Cache TTL (in seconds)
     ARTIST_CACHE_TTL: z.string().transform(Number).default('604800'),
     EVENT_CACHE_TTL: z.string().transform(Number).default('86400'),
+
+    // Ticketmaster HTTP-level cache TTL (in seconds, default 10 min)
+    // This caches raw API responses to avoid duplicate calls for the same params.
+    TM_HTTP_CACHE_TTL: z.string().transform(Number).default('600'),
 
     // CORS
     CORS_ORIGINS: z.string().default('http://localhost:3000'),

@@ -175,16 +175,55 @@ export default function EventExplorerMap({
             shadowSize: [41, 41],
         });
 
+        const soldOutIcon = new L.Icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41],
+        });
+
         const markers: any[] = [];
 
         for (const event of events) {
             const [lng, lat] = event.venue.location.coordinates;
             const eventDate = new Date(event.date);
+            const isSoldOut = event.soldOut === true;
 
-            const m = L.marker([lat, lng], { icon: eventIcon }).addTo(map);
+            const m = L.marker([lat, lng], { icon: isSoldOut ? soldOutIcon : eventIcon }).addTo(map);
+
+            const soldOutBadge = isSoldOut
+                ? `<div style="display: inline-block; margin-bottom: 6px; padding: 2px 8px; background: #dc2626; color: #fff;
+                              font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px;">
+                      Sold Out
+                   </div>`
+                : '';
+
+            const fewLeftBadge = !isSoldOut && event.inventoryStatus === 'few'
+                ? `<div style="display: inline-block; margin-bottom: 6px; padding: 2px 8px; background: #f59e0b; color: #000;
+                              font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-radius: 3px;">
+                      Few Tickets Left
+                   </div>`
+                : '';
+
+            const ticketButton = event.ticketUrl
+                ? isSoldOut
+                    ? `<a href="${event.ticketUrl}" target="_blank" rel="noopener noreferrer"
+                        style="display: inline-block; margin-top: 8px; padding: 4px 10px; background: #555; color: #ccc;
+                               font-size: 11px; font-weight: 600; text-decoration: none; border-radius: 4px;">
+                        View Event
+                    </a>`
+                    : `<a href="${event.ticketUrl}" target="_blank" rel="noopener noreferrer"
+                        style="display: inline-block; margin-top: 8px; padding: 4px 10px; background: #FCA311; color: #000;
+                               font-size: 11px; font-weight: 600; text-decoration: none; border-radius: 4px;">
+                        Tickets
+                    </a>`
+                : '';
 
             m.bindPopup(`
                 <div style="font-family: 'Instrument Sans', system-ui, sans-serif; min-width: 200px;">
+                    ${soldOutBadge}${fewLeftBadge}
                     <div style="font-family: 'Archivo Black', sans-serif; font-size: 14px; color: #E5E5DB; margin-bottom: 4px;">
                         ${event.artistName}
                     </div>
@@ -194,18 +233,10 @@ export default function EventExplorerMap({
                     <div style="font-size: 11px; color: #E5E5DB66; margin-bottom: 6px;">
                         ${event.venue.city}, ${event.venue.country}
                     </div>
-                    <div style="font-size: 11px; color: #FCA311; font-weight: 600;">
+                    <div style="font-size: 11px; color: ${isSoldOut ? '#dc2626' : '#FCA311'}; font-weight: 600;">
                         ${eventDate.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
                     </div>
-                    ${
-                        event.ticketUrl
-                            ? `<a href="${event.ticketUrl}" target="_blank" rel="noopener noreferrer"
-                                style="display: inline-block; margin-top: 8px; padding: 4px 10px; background: #FCA311; color: #000;
-                                       font-size: 11px; font-weight: 600; text-decoration: none; border-radius: 4px;">
-                                Tickets
-                            </a>`
-                            : ''
-                    }
+                    ${ticketButton}
                 </div>
             `, {
                 className: 'event-popup-dark',
@@ -348,7 +379,11 @@ export default function EventExplorerMap({
                         </div>
                         <div className="flex items-center gap-1.5">
                             <div className="w-3 h-3 rounded-full bg-orange" />
-                            <span className="text-[10px] font-body text-alabaster/60">Events</span>
+                            <span className="text-[10px] font-body text-alabaster/60">Available</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-3 h-3 rounded-full bg-red-600" />
+                            <span className="text-[10px] font-body text-alabaster/60">Sold Out</span>
                         </div>
                     </div>
                 )}

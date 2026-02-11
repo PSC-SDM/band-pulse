@@ -14,7 +14,7 @@ import { configureOAuth, passport } from './infrastructure/auth/oauth.config';
 import { MongoArtistRepository } from './infrastructure/repositories/mongodb-artist.repository';
 import { MongoFollowRepository } from './infrastructure/repositories/mongodb-follow.repository';
 import { MongoUserRepository } from './infrastructure/repositories/mongodb-user.repository';
-import { MockEventRepository } from './infrastructure/repositories/mock-event.repository';
+import { TicketmasterEventRepository } from './infrastructure/repositories/ticketmaster-event.repository';
 
 // Application Services
 import { ArtistService } from './application/artist/artist.service';
@@ -46,14 +46,14 @@ import { errorHandler } from './interfaces/http/middleware/error.middleware';
 const artistRepository = new MongoArtistRepository();
 const followRepository = new MongoFollowRepository();
 const userRepository = new MongoUserRepository();
-const eventRepository = new MockEventRepository();
+const eventRepository = new TicketmasterEventRepository(artistRepository);
 
 // Services
 const artistService = new ArtistService(artistRepository);
 const followService = new FollowService(followRepository, artistRepository);
 const authService = new AuthService(userRepository);
 const userService = new UserService(userRepository);
-const eventService = new EventService(eventRepository, artistRepository, followRepository, userRepository);
+const eventService = new EventService(eventRepository, followRepository, userRepository);
 
 // Controllers
 const artistController = new ArtistController(artistService, followService);

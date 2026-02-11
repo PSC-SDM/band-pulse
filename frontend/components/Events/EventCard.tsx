@@ -31,27 +31,52 @@ export default function EventCard({ event }: EventCardProps) {
         minute: '2-digit',
     });
 
+    const isSoldOut = event.soldOut === true;
+    const isFewLeft = !isSoldOut && event.inventoryStatus === 'few';
+
     return (
-        <div className="group relative overflow-hidden bg-prussian/80 backdrop-blur-sm
-                        border-l-2 border-transparent hover:border-orange
-                        transition-all duration-500">
+        <div className={`group relative overflow-hidden bg-prussian/80 backdrop-blur-sm
+                        border-l-2 transition-all duration-500
+                        ${isSoldOut ? 'border-red-600/40 hover:border-red-500' : 'border-transparent hover:border-orange'}`}>
             {/* Hover background accent */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                <div className="absolute -right-16 -top-16 w-32 h-32 bg-orange/5 rotate-45" />
+                <div className={`absolute -right-16 -top-16 w-32 h-32 rotate-45 ${isSoldOut ? 'bg-red-500/5' : 'bg-orange/5'}`} />
             </div>
 
             <div className="relative p-6">
+                {/* Sold out / Few left badges */}
+                {isSoldOut && (
+                    <div className="mb-3">
+                        <span className="inline-block px-2.5 py-1 bg-red-600/20 text-red-400 text-[10px] font-display
+                                        uppercase tracking-[0.15em] border border-red-500/30 rounded">
+                            Sold Out
+                        </span>
+                    </div>
+                )}
+                {isFewLeft && (
+                    <div className="mb-3">
+                        <span className="inline-block px-2.5 py-1 bg-amber-500/20 text-amber-400 text-[10px] font-display
+                                        uppercase tracking-[0.15em] border border-amber-500/30 rounded">
+                            Few Tickets Left
+                        </span>
+                    </div>
+                )}
+
                 <div className="flex gap-5">
-                    {/* Date badge - Orange for temporal activation */}
+                    {/* Date badge */}
                     <div className="flex-shrink-0 w-16 text-center">
-                        <div className="bg-orange/10 border border-orange/20 rounded-lg p-2">
-                            <div className="text-2xl font-accent text-orange leading-none">
+                        <div className={`rounded-lg p-2 border ${
+                            isSoldOut
+                                ? 'bg-red-600/10 border-red-500/20'
+                                : 'bg-orange/10 border-orange/20'
+                        }`}>
+                            <div className={`text-2xl font-accent leading-none ${isSoldOut ? 'text-red-400' : 'text-orange'}`}>
                                 {dayNum}
                             </div>
-                            <div className="text-[10px] font-display tracking-[0.2em] text-orange/80 mt-1">
+                            <div className={`text-[10px] font-display tracking-[0.2em] mt-1 ${isSoldOut ? 'text-red-400/80' : 'text-orange/80'}`}>
                                 {monthShort}
                             </div>
-                            <div className="text-[10px] font-display text-orange/50">
+                            <div className={`text-[10px] font-display ${isSoldOut ? 'text-red-400/50' : 'text-orange/50'}`}>
                                 {yearNum}
                             </div>
                         </div>
@@ -59,8 +84,10 @@ export default function EventCard({ event }: EventCardProps) {
 
                     {/* Event info */}
                     <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-accent text-white mb-1 truncate
-                                     group-hover:text-orange transition-colors duration-300">
+                        <h3 className={`text-lg font-accent mb-1 truncate transition-colors duration-300
+                                     ${isSoldOut
+                                         ? 'text-white/60 group-hover:text-red-400'
+                                         : 'text-white group-hover:text-orange'}`}>
                             {event.artistName}
                         </h3>
 
@@ -92,31 +119,34 @@ export default function EventCard({ event }: EventCardProps) {
                     </div>
                 </div>
 
-                {/* Ticket CTA - Orange for action */}
+                {/* Ticket CTA */}
                 {event.ticketUrl && (
                     <div className="mt-4 pt-4 border-t border-alabaster/10">
                         <a
                             href={event.ticketUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-4 py-2
-                                     bg-orange/10 text-orange text-sm font-display uppercase tracking-wider
-                                     border border-orange/20 rounded-lg
-                                     hover:bg-orange hover:text-night
-                                     transition-all duration-300"
+                            className={`inline-flex items-center gap-2 px-4 py-2
+                                     text-sm font-display uppercase tracking-wider
+                                     border rounded-lg transition-all duration-300
+                                     ${isSoldOut
+                                         ? 'bg-red-600/10 text-red-400 border-red-500/20 hover:bg-red-600/20'
+                                         : 'bg-orange/10 text-orange border-orange/20 hover:bg-orange hover:text-night'
+                                     }`}
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                                     d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                             </svg>
-                            View Tickets
+                            {isSoldOut ? 'View Event' : 'View Tickets'}
                         </a>
                     </div>
                 )}
             </div>
 
             {/* Bottom progress bar on hover */}
-            <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-700" />
+            <div className={`absolute bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-700
+                           ${isSoldOut ? 'bg-red-500' : 'bg-orange'}`} />
         </div>
     );
 }
