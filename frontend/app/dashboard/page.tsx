@@ -92,15 +92,15 @@ export default function DashboardPage() {
 
                     {/* Right column - Stacked cards */}
                     <div className="md:col-span-5 flex flex-col gap-4 md:gap-6">
-                        {/* Location card */}
+                        {/* Your Pulse card */}
                         <a
-                            href="/dashboard/settings/location"
-                            className="group relative overflow-hidden bg-prussian/60 backdrop-blur-sm p-6 md:p-8
+                            href="/dashboard/your-pulse"
+                            className="group relative overflow-hidden bg-prussian/70 backdrop-blur-sm p-6 md:p-8
                                        border-l-2 border-transparent hover:border-orange
                                        transition-all duration-500 opacity-0 animate-fade-up stagger-2"
                         >
                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                <div className="absolute -right-16 -bottom-16 w-32 h-32 bg-orange/5 rotate-12" />
+                                <div className="absolute -right-16 -top-16 w-32 h-32 bg-orange/5 rotate-12" />
                             </div>
 
                             <div className="relative flex items-start gap-5">
@@ -112,12 +112,12 @@ export default function DashboardPage() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center justify-between mb-2">
                                         <h3 className="text-lg font-accent text-white group-hover:text-orange transition-colors">
-                                            Set Location
+                                            Your Pulse
                                         </h3>
                                         <Icon icon="mdi:chevron-right" className="text-lg text-alabaster/30 group-hover:text-orange group-hover:translate-x-1 transition-all" />
                                     </div>
                                     <p className="text-sm text-alabaster/50 font-body">
-                                        Choose your location and search radius to discover concerts near you
+                                        Discover concerts on the map, set your location, and explore events near you
                                     </p>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
                             href="/dashboard/settings"
                             className="group relative overflow-hidden bg-prussian/40 backdrop-blur-sm p-6 md:p-8
                                        border-l-2 border-transparent hover:border-alabaster/30
-                                       transition-all duration-500 opacity-0 animate-fade-up stagger-3"
+                                       transition-all duration-500 opacity-0 animate-fade-up stagger-4"
                         >
                             <div className="relative flex items-start gap-5">
                                 <div className="w-12 h-12 bg-night/40 flex items-center justify-center flex-shrink-0

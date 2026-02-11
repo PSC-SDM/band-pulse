@@ -4,7 +4,7 @@
 
 ## Objetivo
 
-Implementar integración con APIs de eventos (Bandsintown), sistema de workers para sincronización periódica, y visualización de conciertos filtrados por ubicación del usuario.
+Implementar eventos, la api interna de momento estara mockeada con este modelado de datos y desde la pagina del artista pueda ver los eventos de este artista, tanto en tabla como en mapa y desde el perfil de ubicacion del usuario ver el listado de eventos que hacen match con la ubicacion, seguidores y radio del mapa
 
 ---
 

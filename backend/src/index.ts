@@ -14,22 +14,26 @@ import { configureOAuth, passport } from './infrastructure/auth/oauth.config';
 import { MongoArtistRepository } from './infrastructure/repositories/mongodb-artist.repository';
 import { MongoFollowRepository } from './infrastructure/repositories/mongodb-follow.repository';
 import { MongoUserRepository } from './infrastructure/repositories/mongodb-user.repository';
+import { MockEventRepository } from './infrastructure/repositories/mock-event.repository';
 
 // Application Services
 import { ArtistService } from './application/artist/artist.service';
 import { FollowService } from './application/follow/follow.service';
 import { AuthService } from './application/auth/auth.service';
 import { UserService } from './application/user/user.service';
+import { EventService } from './application/event/event.service';
 
 // Interface Layer - Controllers
 import { ArtistController } from './interfaces/http/controllers/artist.controller';
 import { AuthController } from './interfaces/http/controllers/auth.controller';
 import { UserController } from './interfaces/http/controllers/user.controller';
+import { EventController } from './interfaces/http/controllers/event.controller';
 
 // Interface Layer - Routes
 import { createArtistRoutes } from './interfaces/http/routes/artist.routes';
 import { createAuthRoutes } from './interfaces/http/routes/auth.routes';
 import { createUserRoutes } from './interfaces/http/routes/user.routes';
+import { createEventRoutes } from './interfaces/http/routes/event.routes';
 
 // Interface Layer - Middleware
 import { errorHandler } from './interfaces/http/middleware/error.middleware';
@@ -42,17 +46,20 @@ import { errorHandler } from './interfaces/http/middleware/error.middleware';
 const artistRepository = new MongoArtistRepository();
 const followRepository = new MongoFollowRepository();
 const userRepository = new MongoUserRepository();
+const eventRepository = new MockEventRepository();
 
 // Services
 const artistService = new ArtistService(artistRepository);
 const followService = new FollowService(followRepository, artistRepository);
 const authService = new AuthService(userRepository);
 const userService = new UserService(userRepository);
+const eventService = new EventService(eventRepository, artistRepository, followRepository, userRepository);
 
 // Controllers
 const artistController = new ArtistController(artistService, followService);
 const authController = new AuthController(authService);
 const userController = new UserController(userService);
+const eventController = new EventController(eventService);
 
 // Configure OAuth with injected repository
 configureOAuth(userRepository);
@@ -123,6 +130,7 @@ app.get('/api', (_req: Request, res: Response) => {
 app.use('/api/auth', createAuthRoutes(authController));
 app.use('/api/users', createUserRoutes(userController));
 app.use('/api/artists', createArtistRoutes(artistController));
+app.use('/api/events', createEventRoutes(eventController));
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

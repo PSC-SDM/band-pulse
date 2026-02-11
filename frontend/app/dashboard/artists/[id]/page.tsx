@@ -5,8 +5,12 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getArtistById } from '@/lib/artists';
+import { getArtistEvents } from '@/lib/events';
 import { Artist } from '@/types/artist.types';
+import { EventResponse } from '@/types/event.types';
 import FollowButton from '@/components/artists/FollowButton';
+import EventCard from '@/components/Events/EventCard';
+import EventMap from '@/components/Events/EventMap';
 
 /**
  * Artist Detail Page
@@ -29,6 +33,9 @@ export default function ArtistDetailPage() {
     const artistId = params.id as string;
 
     const [artist, setArtist] = useState<Artist | null>(null);
+    const [events, setEvents] = useState<EventResponse[]>([]);
+    const [eventsLoading, setEventsLoading] = useState(false);
+    const [eventsView, setEventsView] = useState<'list' | 'map'>('list');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +67,25 @@ export default function ArtistDetailPage() {
         };
 
         fetchArtist();
+    }, [token, artistId]);
+
+    // Fetch artist events
+    useEffect(() => {
+        if (!token || !artistId) return;
+
+        const fetchEvents = async () => {
+            setEventsLoading(true);
+            try {
+                const data = await getArtistEvents(artistId, token);
+                setEvents(data);
+            } catch {
+                // Silently fail - events are supplementary
+            } finally {
+                setEventsLoading(false);
+            }
+        };
+
+        fetchEvents();
     }, [token, artistId]);
 
     // Handle follow status change
@@ -316,26 +342,73 @@ export default function ArtistDetailPage() {
                     </section>
                 )}
 
-                {/* Upcoming Events Placeholder */}
+                {/* Upcoming Events */}
                 <section className="mt-8 opacity-0 animate-fade-up"
                     style={{ animationFillMode: 'forwards', animationDelay: '0.4s' }}>
-                    <h2 className="text-lg font-display uppercase tracking-wider text-alabaster/70 mb-4">
-                        Upcoming Events
-                    </h2>
-                    <div className="bg-prussian/30 rounded-xl p-8 border border-alabaster/10 text-center">
-                        <div className="text-alabaster/30 mb-3">
-                            <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
-                        <p className="text-alabaster/50 font-body">
-                            Event discovery coming in a future update.
-                        </p>
-                        <p className="text-alabaster/30 text-sm font-body mt-1">
-                            Follow {artist.name} to get notified when we add concert tracking.
-                        </p>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-display uppercase tracking-wider text-alabaster/70">
+                            Upcoming Events
+                        </h2>
+
+                        {events.length > 0 && (
+                            <div className="flex bg-prussian/60 border border-alabaster/10 rounded-lg p-0.5">
+                                <button
+                                    onClick={() => setEventsView('list')}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-display uppercase tracking-wider transition-all
+                                              ${eventsView === 'list'
+                                            ? 'bg-orange/10 text-orange border border-orange/20'
+                                            : 'text-alabaster/50 hover:text-white'
+                                        }`}
+                                >
+                                    List
+                                </button>
+                                <button
+                                    onClick={() => setEventsView('map')}
+                                    className={`px-3 py-1.5 rounded-md text-xs font-display uppercase tracking-wider transition-all
+                                              ${eventsView === 'map'
+                                            ? 'bg-orange/10 text-orange border border-orange/20'
+                                            : 'text-alabaster/50 hover:text-white'
+                                        }`}
+                                >
+                                    Map
+                                </button>
+                            </div>
+                        )}
                     </div>
+
+                    {eventsLoading && (
+                        <div className="space-y-3">
+                            {[...Array(3)].map((_, i) => (
+                                <div key={i} className="h-32 bg-prussian/40 rounded animate-pulse" />
+                            ))}
+                        </div>
+                    )}
+
+                    {!eventsLoading && events.length === 0 && (
+                        <div className="bg-prussian/30 rounded-xl p-8 border border-alabaster/10 text-center">
+                            <div className="text-alabaster/30 mb-3">
+                                <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <p className="text-alabaster/50 font-body">
+                                No upcoming events found for {artist.name}.
+                            </p>
+                        </div>
+                    )}
+
+                    {!eventsLoading && events.length > 0 && eventsView === 'list' && (
+                        <div className="space-y-3">
+                            {events.map((event) => (
+                                <EventCard key={event.id} event={event} />
+                            ))}
+                        </div>
+                    )}
+
+                    {!eventsLoading && events.length > 0 && eventsView === 'map' && (
+                        <EventMap events={events} />
+                    )}
                 </section>
             </div>
         </div>

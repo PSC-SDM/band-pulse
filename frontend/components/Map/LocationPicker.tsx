@@ -219,16 +219,16 @@ export default function LocationPicker({
                     <input
                         type="range"
                         min="5"
-                        max="500"
-                        step="5"
+                        max="5000"
+                        step="10"
                         value={radius}
                         onChange={(e) => setRadius(Number(e.target.value))}
                         className="w-full h-2 bg-prussian-light rounded-lg appearance-none cursor-pointer accent-orange"
                     />
                     <div className="flex justify-between text-xs text-alabaster/50 mt-1 font-body">
                         <span>5 km</span>
-                        <span>250 km</span>
-                        <span>500 km</span>
+                        <span>2500 km</span>
+                        <span>5000 km</span>
                     </div>
                 </div>
 
