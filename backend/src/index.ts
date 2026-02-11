@@ -1,14 +1,65 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { connectDatabase, getDatabase } from './config/database';
-import { env } from './config/env';
-import { errorHandler } from './shared/middleware/error.middleware';
+
+// Shared
+import { env } from './shared/config/env';
 import { logger } from './shared/utils/logger';
-import { passport } from './config/oauth';
-import { authRoutes } from './routes/auth.routes';
-import { usersRoutes } from './routes/users.routes';
-import { artistsRoutes } from './routes/artists.routes';
+
+// Infrastructure
+import { connectDatabase, getDatabase } from './infrastructure/database/mongodb.connection';
+import { configureOAuth, passport } from './infrastructure/auth/oauth.config';
+
+// Repositories (Infrastructure implementations)
+import { MongoArtistRepository } from './infrastructure/repositories/mongodb-artist.repository';
+import { MongoFollowRepository } from './infrastructure/repositories/mongodb-follow.repository';
+import { MongoUserRepository } from './infrastructure/repositories/mongodb-user.repository';
+
+// Application Services
+import { ArtistService } from './application/artist/artist.service';
+import { FollowService } from './application/follow/follow.service';
+import { AuthService } from './application/auth/auth.service';
+import { UserService } from './application/user/user.service';
+
+// Interface Layer - Controllers
+import { ArtistController } from './interfaces/http/controllers/artist.controller';
+import { AuthController } from './interfaces/http/controllers/auth.controller';
+import { UserController } from './interfaces/http/controllers/user.controller';
+
+// Interface Layer - Routes
+import { createArtistRoutes } from './interfaces/http/routes/artist.routes';
+import { createAuthRoutes } from './interfaces/http/routes/auth.routes';
+import { createUserRoutes } from './interfaces/http/routes/user.routes';
+
+// Interface Layer - Middleware
+import { errorHandler } from './interfaces/http/middleware/error.middleware';
+
+// ============================================================================
+// Bootstrap - Dependency Composition
+// ============================================================================
+
+// Repositories
+const artistRepository = new MongoArtistRepository();
+const followRepository = new MongoFollowRepository();
+const userRepository = new MongoUserRepository();
+
+// Services
+const artistService = new ArtistService(artistRepository);
+const followService = new FollowService(followRepository, artistRepository);
+const authService = new AuthService(userRepository);
+const userService = new UserService(userRepository);
+
+// Controllers
+const artistController = new ArtistController(artistService, followService);
+const authController = new AuthController(authService);
+const userController = new UserController(userService);
+
+// Configure OAuth with injected repository
+configureOAuth(userRepository);
+
+// ============================================================================
+// Express App Setup
+// ============================================================================
 
 const app: Express = express();
 
@@ -41,7 +92,6 @@ if (env.NODE_ENV === 'development') {
 // Health check endpoint
 app.get('/health', async (_req: Request, res: Response) => {
     try {
-        // Check database connection
         const db = getDatabase();
         await db.admin().ping();
 
@@ -60,7 +110,7 @@ app.get('/health', async (_req: Request, res: Response) => {
     }
 });
 
-// API routes placeholder
+// API info endpoint
 app.get('/api', (_req: Request, res: Response) => {
     res.json({
         name: 'BandPulse API',
@@ -69,14 +119,10 @@ app.get('/api', (_req: Request, res: Response) => {
     });
 });
 
-// Auth routes
-app.use('/api/auth', authRoutes);
-
-// User routes
-app.use('/api/users', usersRoutes);
-
-// Artist routes
-app.use('/api/artists', artistsRoutes);
+// API routes
+app.use('/api/auth', createAuthRoutes(authController));
+app.use('/api/users', createUserRoutes(userController));
+app.use('/api/artists', createArtistRoutes(artistController));
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
@@ -86,7 +132,10 @@ app.use((_req: Request, res: Response) => {
 // Error handler
 app.use(errorHandler);
 
-// Start server
+// ============================================================================
+// Start Server
+// ============================================================================
+
 async function start(): Promise<void> {
     try {
         // Connect to database
@@ -94,9 +143,9 @@ async function start(): Promise<void> {
 
         // Start listening
         app.listen(env.PORT, () => {
-            logger.info(`🚀 BandPulse API running on port ${env.PORT}`);
-            logger.info(`📍 Environment: ${env.NODE_ENV}`);
-            logger.info(`🔗 Health check: http://localhost:${env.PORT}/health`);
+            logger.info(`BandPulse API running on port ${env.PORT}`);
+            logger.info(`Environment: ${env.NODE_ENV}`);
+            logger.info(`Health check: http://localhost:${env.PORT}/health`);
         });
     } catch (error) {
         logger.error('Failed to start server:', error);
