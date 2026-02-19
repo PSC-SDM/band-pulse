@@ -13,13 +13,12 @@ interface ArtistCardProps {
 
 /**
  * Artist card component for display in lists and search results.
- * 
+ *
  * Style Guide compliance:
- * - Prussian Blue background for cards
- * - White text for primary content
- * - Alabaster for secondary text
- * - Orange accent only for follow CTA (controlled usage)
- * - Dynamic, non-rectangular layout with diagonal accents
+ * - Prussian Blue flat background, no transparency stacking
+ * - White text for primary content, Alabaster for secondary
+ * - Orange only on hover for artist name (controlled usage)
+ * - No decorative shapes or motion — quiet, precise, reliable
  */
 export default function ArtistCard({
     artist,
@@ -27,7 +26,6 @@ export default function ArtistCard({
     showFollowButton = true,
     onFollowChange,
 }: ArtistCardProps) {
-    // Generate initials for placeholder avatar
     const initials = artist.name
         .split(' ')
         .map(word => word[0])
@@ -35,7 +33,6 @@ export default function ArtistCard({
         .join('')
         .toUpperCase();
 
-    // Get country flag emoji from ISO code
     const getCountryFlag = (iso: string | undefined) => {
         if (!iso || iso.length !== 2) return null;
         const codePoints = iso
@@ -45,99 +42,84 @@ export default function ArtistCard({
         return String.fromCodePoint(...codePoints);
     };
 
+    const flag = artist.area?.iso31661 ? getCountryFlag(artist.area.iso31661) : null;
+
+    const followerCount = artist.metadata?.followerCount;
+    const formatFollowers = (count: number) => {
+        if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
+        if (count >= 1_000) return `${Math.round(count / 1_000)}K`;
+        return count.toString();
+    };
+
     return (
         <div className="group relative">
             <Link
                 href={`/dashboard/artists/${artist.id}`}
-                className="block relative overflow-hidden bg-prussian/80 backdrop-blur-sm
-                           border-l-2 border-transparent hover:border-orange
-                           transition-all duration-300 hover:bg-prussian"
+                className="block bg-prussian border border-white/[0.06]
+                           hover:border-white/10 hover:bg-[#192d50]
+                           transition-colors duration-150"
             >
-                {/* Diagonal accent background */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute -right-20 -top-20 w-40 h-40 bg-orange/5 rotate-45 transform origin-center" />
-                </div>
-
-                <div className="relative p-5">
-                    <div className="flex items-center gap-5">
-                        {/* Avatar / Image - Hexagonal mask for visual interest */}
-                        <div className="relative flex-shrink-0">
-                            <div className="w-16 h-16 clip-hexagon overflow-hidden bg-night">
-                                {artist.imageUrl ? (
-                                    <img
-                                        src={artist.imageUrl}
-                                        alt={artist.name}
-                                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-prussian-light">
-                                        <span className="text-xl font-accent text-alabaster/60">
-                                            {initials}
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Country flag badge - positioned outside hexagon */}
-                            {artist.area?.iso31661 && (
-                                <span className="absolute -bottom-1 -right-1 text-lg drop-shadow-lg" title={artist.area.name}>
-                                    {getCountryFlag(artist.area.iso31661)}
+                <div className="px-5 py-4 pr-36">
+                    <div className="flex items-center gap-4">
+                        {/* Square initials avatar — no decorative clipping */}
+                        <div className="flex-shrink-0 w-11 h-11 bg-night border border-white/10
+                                       flex items-center justify-center">
+                            {artist.imageUrl ? (
+                                <img
+                                    src={artist.imageUrl}
+                                    alt={artist.name}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-xs font-accent text-alabaster/40 tracking-widest select-none">
+                                    {initials}
                                 </span>
                             )}
                         </div>
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                            <h3 className="font-accent text-lg text-white truncate
-                                         group-hover:text-orange transition-colors duration-300">
+                            <h3 className="font-accent text-[15px] text-white leading-snug truncate
+                                         group-hover:text-orange transition-colors duration-150">
                                 {artist.name}
                             </h3>
 
-                            {/* Area/Country with accent line */}
-                            {artist.area && (
-                                <div className="flex items-center gap-2 mt-1">
-                                    <div className="w-3 h-px bg-alabaster/30 group-hover:bg-orange/50 group-hover:w-6 transition-all duration-300" />
-                                    <p className="text-sm text-alabaster/60 font-body truncate">
-                                        {artist.area.name}
-                                    </p>
-                                </div>
-                            )}
+                            {/* Single meta line: flag + country · genres · followers */}
+                            <div className="flex items-center gap-2 mt-0.5 min-w-0">
+                                {artist.area && (
+                                    <span className="text-xs text-alabaster/50 font-body flex items-center gap-1 flex-shrink-0">
+                                        {flag && <span>{flag}</span>}
+                                        <span>{artist.area.name}</span>
+                                    </span>
+                                )}
 
-                            {/* Aliases (show first 2) */}
-                            {artist.aliases.length > 0 && (
-                                <p className="text-xs text-alabaster/40 font-body truncate mt-1.5">
-                                    aka {artist.aliases.slice(0, 2).map(a => a.name).join(', ')}
-                                </p>
-                            )}
+                                {artist.area && artist.genres && artist.genres.length > 0 && (
+                                    <span className="text-alabaster/20 text-xs flex-shrink-0 select-none">·</span>
+                                )}
 
-                            {/* Genres - pill style with dynamic spacing */}
-                            {artist.genres && artist.genres.length > 0 && (
-                                <div className="flex gap-1.5 mt-3 flex-wrap">
-                                    {artist.genres.slice(0, 3).map((genre, index) => (
-                                        <span
-                                            key={genre}
-                                            className="px-2 py-0.5 text-[10px] font-display uppercase tracking-wider
-                                                     bg-night/60 text-alabaster/70 
-                                                     border-l border-alabaster/10 group-hover:border-orange/30
-                                                     transition-colors duration-300"
-                                            style={{ animationDelay: `${index * 50}ms` }}
-                                        >
-                                            {genre}
+                                {artist.genres && artist.genres.length > 0 && (
+                                    <span className="text-xs text-alabaster/35 font-body truncate">
+                                        {artist.genres.slice(0, 3).join(' · ')}
+                                    </span>
+                                )}
+
+                                {followerCount && (
+                                    <>
+                                        <span className="text-alabaster/20 text-xs flex-shrink-0 select-none">·</span>
+                                        <span className="text-xs text-alabaster/30 font-body flex-shrink-0">
+                                            {formatFollowers(followerCount)}
                                         </span>
-                                    ))}
-                                </div>
-                            )}
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Bottom progress bar on hover */}
-                <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-500" />
             </Link>
 
-            {/* Follow button - positioned outside link to prevent navigation on click */}
+            {/* Follow button — outside link to avoid navigation on click */}
             {showFollowButton && (
-                <div className="absolute top-4 right-4 z-10">
+                <div className="absolute top-1/2 -translate-y-1/2 right-4 z-10">
                     <FollowButton
                         artistId={artist.id}
                         initialFollowing={artist.isFollowing ?? false}

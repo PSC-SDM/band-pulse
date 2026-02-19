@@ -104,36 +104,31 @@ export default function ArtistsPage() {
                 {/* Search Section */}
                 <section className="mb-12 opacity-0 animate-fade-up stagger-2 relative z-50"
                     style={{ animationFillMode: 'forwards' }}>
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-orange/5 via-transparent to-orange/5 
-                                      rounded-2xl blur-xl" />
-                        <div className="relative bg-prussian-dark/50 backdrop-blur-sm 
-                                      border border-alabaster/10 rounded-2xl p-6">
-                            <h2 className="text-lg font-display uppercase tracking-wider text-alabaster/70 mb-4">
-                                Search Artists
-                            </h2>
-                            {token && (
-                                <ArtistSearch
-                                    token={token}
-                                    onFollowChange={handleFollowChange}
-                                />
-                            )}
-                        </div>
+                    <div className="bg-prussian border border-white/[0.06] p-6">
+                        <h2 className="text-xs font-display uppercase tracking-widest text-alabaster/40 mb-4">
+                            Search Artists
+                        </h2>
+                        {token && (
+                            <ArtistSearch
+                                token={token}
+                                onFollowChange={handleFollowChange}
+                            />
+                        )}
                     </div>
                 </section>
 
                 {/* Following Section */}
                 <section className="opacity-0 animate-fade-up stagger-3 relative z-10"
                     style={{ animationFillMode: 'forwards' }}>
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-display uppercase tracking-wider text-white">
+                    <div className="flex items-center gap-3 mb-6">
+                        <h2 className="text-xs font-display uppercase tracking-widest text-alabaster/40">
                             Following
-                            {followedArtists.length > 0 && (
-                                <span className="ml-3 px-2 py-0.5 text-sm bg-orange/20 text-orange rounded">
-                                    {followedArtists.length}
-                                </span>
-                            )}
                         </h2>
+                        {followedArtists.length > 0 && (
+                            <span className="text-xs font-body text-orange tabular-nums">
+                                {followedArtists.length}
+                            </span>
+                        )}
                     </div>
 
                     {/* Error State */}
