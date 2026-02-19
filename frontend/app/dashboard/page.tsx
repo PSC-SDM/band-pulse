@@ -31,173 +31,187 @@ export default function DashboardPage() {
 
     return (
         <div className="bg-night min-h-[calc(100vh-73px-65px)]">
-            <div className="mx-auto max-w-7xl px-6 py-12">
-                {/* Header with dynamic greeting */}
-                <div className="mb-12 opacity-0 animate-fade-up">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="h-px w-8 bg-orange" />
-                        <span className="font-display text-xs tracking-[0.3em] text-orange uppercase">Dashboard</span>
+            <div className="mx-auto max-w-7xl px-6 py-10 md:py-14">
+
+                {/* Top bar: greeting + status */}
+                <div className="flex items-center justify-between mb-10 opacity-0 animate-fade-up">
+                    <div className="flex items-center gap-3">
+                        <div className="h-px w-8 bg-orange/60" />
+                        <span className="font-body text-sm text-alabaster/50">
+                            Hi, <span className="text-alabaster/80">{session?.user?.name || 'Music Fan'}</span>
+                        </span>
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-accent text-white leading-tight">
-                        Welcome back,<br />
-                        <span className="text-alabaster/70">{session?.user?.name || 'Music Fan'}</span>
-                    </h1>
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-green-500/80 rounded-full animate-pulse" />
+                        <span className="font-display text-xs tracking-[0.2em] text-alabaster/40 uppercase">Radar active</span>
+                    </div>
                 </div>
 
-                {/* Action Grid - Asymmetric layout */}
-                <div className="grid md:grid-cols-12 gap-4 md:gap-6">
-                    {/* Artists - Large card */}
+                {/* Hero: Your Bands + Your Pulse */}
+                <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-6">
+
+                    {/* YOUR BANDS */}
                     <a
                         href="/dashboard/artists"
-                        className="group md:col-span-7 relative overflow-hidden bg-prussian/80 backdrop-blur-sm p-8 md:p-10
-                                   border-l-2 border-transparent hover:border-orange
-                                   transition-all duration-500 opacity-0 animate-fade-up stagger-1"
+                        className="group relative overflow-hidden bg-prussian/80 backdrop-blur-sm
+                                   border-l-2 border-orange p-8 md:p-10
+                                   hover:bg-prussian transition-all duration-500
+                                   opacity-0 animate-fade-up stagger-1"
                     >
-                        {/* Background accent */}
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                            <div className="absolute -right-32 -top-32 w-64 h-64 bg-orange/5 rotate-45" />
-                            <div className="absolute -left-20 -bottom-20 w-40 h-40 bg-prussian-light/30 rounded-full blur-2xl" />
+                        {/* Decorative background */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <div className="absolute -right-24 -bottom-24 w-48 h-48 bg-orange/5 rotate-45
+                                          group-hover:bg-orange/8 transition-colors duration-700" />
+                            <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-orange/20 via-transparent to-transparent" />
                         </div>
 
                         <div className="relative">
-                            <div className="flex items-start justify-between mb-8">
-                                <div className="w-14 h-14 bg-night/60 flex items-center justify-center
-                                              group-hover:bg-orange/10 transition-colors duration-300">
-                                    <Icon icon="mdi:account-music" className="text-2xl text-alabaster/60 group-hover:text-orange transition-colors" />
-                                </div>
-                                <Icon icon="mdi:arrow-right" className="text-xl text-alabaster/30 group-hover:text-orange group-hover:translate-x-2 transition-all duration-300" />
+                            {/* Label */}
+                            <div className="flex items-center gap-2 mb-6">
+                                <span className="font-display text-xs tracking-[0.3em] text-orange uppercase">Your Bands</span>
+                                <div className="flex-1 h-px bg-orange/20" />
                             </div>
 
-                            <h3 className="text-2xl md:text-3xl font-accent text-white mb-3 group-hover:text-orange transition-colors duration-300">
-                                Artists
-                            </h3>
-                            <p className="text-alabaster/60 font-body leading-relaxed max-w-md">
-                                Search and follow your favorite artists to discover their concerts. Build your personal music radar.
+                            {/* Icon */}
+                            <div className="w-12 h-12 bg-orange/10 flex items-center justify-center mb-6
+                                          group-hover:bg-orange/20 transition-colors duration-300">
+                                <Icon icon="mdi:account-music" className="text-2xl text-orange" />
+                            </div>
+
+                            {/* Copy */}
+                            <h2 className="text-3xl md:text-4xl font-accent text-white leading-tight mb-3
+                                         group-hover:text-orange transition-colors duration-300">
+                                Follow artists.<br />
+                                <span className="text-alabaster/70 group-hover:text-orange/70">Fuel your radar.</span>
+                            </h2>
+                            <p className="font-body text-alabaster/50 leading-relaxed mb-8 max-w-sm">
+                                Every artist you follow feeds your pulse. The more you follow, the sharper your radar gets.
                             </p>
 
-                            {/* Stats placeholder */}
-                            <div className="mt-8 pt-6 border-t border-alabaster/10">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 bg-orange/50 rounded-full" />
-                                    <span className="font-display text-xs tracking-wider text-alabaster/40 uppercase">
-                                        Start following artists
-                                    </span>
-                                </div>
+                            {/* CTA */}
+                            <div className="flex items-center gap-3">
+                                <span className="font-display text-xs tracking-[0.2em] text-orange uppercase">
+                                    Manage Bands
+                                </span>
+                                <Icon icon="mdi:arrow-right"
+                                    className="text-orange group-hover:translate-x-2 transition-transform duration-300" />
+                            </div>
+                        </div>
+
+                        {/* Bottom progress bar */}
+                        <div className="absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r from-orange to-transparent opacity-30
+                                      group-hover:opacity-60 transition-opacity duration-500" />
+                    </a>
+
+                    {/* YOUR PULSE */}
+                    <a
+                        href="/dashboard/your-pulse"
+                        className="group relative overflow-hidden bg-prussian/60 backdrop-blur-sm
+                                   border-l-2 border-transparent hover:border-orange p-8 md:p-10
+                                   transition-all duration-500
+                                   opacity-0 animate-fade-up stagger-2"
+                    >
+                        {/* Animated pulse rings (decorative) */}
+                        <div className="absolute right-8 top-8 pointer-events-none">
+                            <div className="relative w-16 h-16">
+                                <div className="absolute inset-0 border border-orange/10 rounded-full animate-ping" style={{ animationDuration: '3s' }} />
+                                <div className="absolute inset-2 border border-orange/15 rounded-full animate-ping" style={{ animationDuration: '3s', animationDelay: '0.5s' }} />
+                                <div className="absolute inset-4 border border-orange/20 rounded-full animate-ping" style={{ animationDuration: '3s', animationDelay: '1s' }} />
+                                <div className="absolute inset-6 bg-orange/30 rounded-full" />
+                            </div>
+                        </div>
+
+                        <div className="relative">
+                            {/* Label */}
+                            <div className="flex items-center gap-2 mb-6">
+                                <span className="font-display text-xs tracking-[0.3em] text-alabaster/50 uppercase group-hover:text-orange transition-colors duration-300">Your Pulse</span>
+                                <div className="flex-1 h-px bg-alabaster/10 group-hover:bg-orange/20 transition-colors duration-300" />
+                            </div>
+
+                            {/* Icon */}
+                            <div className="w-12 h-12 bg-night/60 flex items-center justify-center mb-6
+                                          group-hover:bg-orange/10 transition-colors duration-300">
+                                <Icon icon="mdi:map-marker-radius" className="text-2xl text-alabaster/50 group-hover:text-orange transition-colors duration-300" />
+                            </div>
+
+                            {/* Copy */}
+                            <h2 className="text-3xl md:text-4xl font-accent text-white leading-tight mb-3">
+                                Your concerts.<br />
+                                <span className="text-orange">Your zone.</span>
+                            </h2>
+                            <p className="font-body text-alabaster/50 leading-relaxed mb-8 max-w-sm">
+                                Set your location and discover live shows from the artists you follow, right where you are.
+                            </p>
+
+                            {/* CTA */}
+                            <div className="flex items-center gap-3">
+                                <span className="font-display text-xs tracking-[0.2em] text-alabaster/50 uppercase
+                                               group-hover:text-orange transition-colors duration-300">
+                                    Check Your Pulse
+                                </span>
+                                <Icon icon="mdi:arrow-right"
+                                    className="text-alabaster/50 group-hover:text-orange group-hover:translate-x-2 transition-all duration-300" />
                             </div>
                         </div>
 
                         {/* Bottom progress bar */}
                         <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-700" />
                     </a>
-
-                    {/* Right column - Stacked cards */}
-                    <div className="md:col-span-5 flex flex-col gap-4 md:gap-6">
-                        {/* Your Pulse card */}
-                        <a
-                            href="/dashboard/your-pulse"
-                            className="group relative overflow-hidden bg-prussian/70 backdrop-blur-sm p-6 md:p-8
-                                       border-l-2 border-transparent hover:border-orange
-                                       transition-all duration-500 opacity-0 animate-fade-up stagger-2"
-                        >
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                <div className="absolute -right-16 -top-16 w-32 h-32 bg-orange/5 rotate-12" />
-                            </div>
-
-                            <div className="relative flex items-start gap-5">
-                                <div className="w-12 h-12 bg-night/60 flex items-center justify-center flex-shrink-0
-                                              group-hover:bg-orange/10 transition-colors duration-300">
-                                    <Icon icon="mdi:map-marker-radius" className="text-xl text-alabaster/60 group-hover:text-orange transition-colors" />
-                                </div>
-
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h3 className="text-lg font-accent text-white group-hover:text-orange transition-colors">
-                                            Your Pulse
-                                        </h3>
-                                        <Icon icon="mdi:chevron-right" className="text-lg text-alabaster/30 group-hover:text-orange group-hover:translate-x-1 transition-all" />
-                                    </div>
-                                    <p className="text-sm text-alabaster/50 font-body">
-                                        Discover concerts on the map, set your location, and explore events near you
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-500" />
-                        </a>
-
-                        {/* Explore card */}
-                        <a
-                            href="/dashboard/explore"
-                            className="group relative overflow-hidden bg-prussian/60 backdrop-blur-sm p-6 md:p-8
-                                       border-l-2 border-transparent hover:border-orange
-                                       transition-all duration-500 opacity-0 animate-fade-up stagger-3"
-                        >
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                <div className="absolute -right-16 -bottom-16 w-32 h-32 bg-orange/5 rotate-12" />
-                            </div>
-
-                            <div className="relative flex items-start gap-5">
-                                <div className="w-12 h-12 bg-night/60 flex items-center justify-center flex-shrink-0
-                                              group-hover:bg-orange/10 transition-colors duration-300">
-                                    <Icon icon="mdi:compass-outline" className="text-xl text-alabaster/60 group-hover:text-orange transition-colors" />
-                                </div>
-
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h3 className="text-lg font-accent text-white group-hover:text-orange transition-colors">
-                                            Explore
-                                        </h3>
-                                        <Icon icon="mdi:chevron-right" className="text-lg text-alabaster/30 group-hover:text-orange group-hover:translate-x-1 transition-all" />
-                                    </div>
-                                    <p className="text-sm text-alabaster/50 font-body">
-                                        Browse all upcoming concerts in any area, from any artist
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-orange group-hover:w-full transition-all duration-500" />
-                        </a>
-
-                        {/* Notifications card */}
-                        <a
-                            href="/dashboard/settings"
-                            className="group relative overflow-hidden bg-prussian/40 backdrop-blur-sm p-6 md:p-8
-                                       border-l-2 border-transparent hover:border-alabaster/30
-                                       transition-all duration-500 opacity-0 animate-fade-up stagger-4"
-                        >
-                            <div className="relative flex items-start gap-5">
-                                <div className="w-12 h-12 bg-night/40 flex items-center justify-center flex-shrink-0
-                                              group-hover:bg-night/60 transition-colors duration-300">
-                                    <Icon icon="mdi:bell-outline" className="text-xl text-alabaster/40 group-hover:text-alabaster/70 transition-colors" />
-                                </div>
-
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h3 className="text-lg font-accent text-alabaster/70 group-hover:text-white transition-colors">
-                                            Notifications
-                                        </h3>
-                                        <Icon icon="mdi:chevron-right" className="text-lg text-alabaster/20 group-hover:text-alabaster/50 group-hover:translate-x-1 transition-all" />
-                                    </div>
-                                    <p className="text-sm text-alabaster/40 font-body">
-                                        Configure how you want to be notified about concerts
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
                 </div>
 
-                {/* Quick stats or recent activity section */}
-                <div className="mt-12 pt-8 border-t border-prussian-light/30 opacity-0 animate-fade-up stagger-4">
-                    <div className="flex items-center justify-between">
-                        <p className="font-display text-xs tracking-[0.2em] text-alabaster/40 uppercase">
-                            Your music radar is active
-                        </p>
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500/80 rounded-full animate-pulse" />
-                            <span className="font-body text-xs text-alabaster/40">Monitoring</span>
+                {/* Secondary row: Explore + Notifications */}
+                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                    <a
+                        href="/dashboard/explore"
+                        className="group relative overflow-hidden bg-prussian/30 backdrop-blur-sm p-5 md:p-6
+                                   border-l-2 border-transparent hover:border-orange/60
+                                   transition-all duration-400 opacity-0 animate-fade-up stagger-3"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-night/40 flex items-center justify-center flex-shrink-0
+                                          group-hover:bg-orange/10 transition-colors duration-300">
+                                <Icon icon="mdi:compass-outline" className="text-lg text-alabaster/40 group-hover:text-orange transition-colors" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-accent text-base text-alabaster/70 group-hover:text-white transition-colors">
+                                        Explore All Concerts
+                                    </h3>
+                                    <Icon icon="mdi:chevron-right"
+                                        className="text-base text-alabaster/30 group-hover:text-orange group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                </div>
+                                <p className="font-body text-xs text-alabaster/40 mt-0.5">
+                                    Browse all upcoming shows in any area
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+
+                    <a
+                        href="/dashboard/settings"
+                        className="group relative overflow-hidden bg-prussian/20 backdrop-blur-sm p-5 md:p-6
+                                   border-l-2 border-transparent hover:border-alabaster/30
+                                   transition-all duration-400 opacity-0 animate-fade-up stagger-4"
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-night/40 flex items-center justify-center flex-shrink-0
+                                          group-hover:bg-night/60 transition-colors duration-300">
+                                <Icon icon="mdi:bell-outline" className="text-lg text-alabaster/30 group-hover:text-alabaster/60 transition-colors" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="font-accent text-base text-alabaster/50 group-hover:text-alabaster/80 transition-colors">
+                                        Notification Settings
+                                    </h3>
+                                    <Icon icon="mdi:chevron-right"
+                                        className="text-base text-alabaster/20 group-hover:text-alabaster/50 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                </div>
+                                <p className="font-body text-xs text-alabaster/30 mt-0.5">
+                                    Configure how you get notified
+                                </p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
         </div>
