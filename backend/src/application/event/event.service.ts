@@ -1,31 +1,62 @@
-import { IEventRepository } from '../../domain/event/event.repository.interface';
+import { IEventRepository, IEventWriter } from '../../domain/event/event.repository.interface';
 import { IFollowRepository } from '../../domain/follow/follow.repository.interface';
 import { IUserRepository } from '../../domain/user/user.repository.interface';
 import { Event } from '../../domain/event/event.entity';
+import { env } from '../../shared/config/env';
 import { logger } from '../../shared/utils/logger';
 
 /**
  * Event Service - Business logic for event discovery.
  *
- * Delegates data access to the injected IEventRepository implementation
- * (TicketmasterEventRepository in production, MockEventRepository for testing).
+ * Implements a Stale-While-Revalidate (SWR) pattern for artist events:
+ * - Reads are always served from MongoDB (mongoEventRepository)
+ * - When data is stale/missing, a background refresh fetches from Ticketmaster
+ *   (via ticketmasterRepository) and persists to MongoDB
+ * - The background refresh never blocks the HTTP response
+ *
+ * For general location explore (no artist filter), Ticketmaster is queried directly
+ * since that data is not artist-specific and not worth persisting.
  */
 export class EventService {
+    private readonly inFlightArtists = new Set<string>();
+
     constructor(
-        private eventRepository: IEventRepository,
+        /** Primary read/write store — MongoDB */
+        private mongoEventRepository: IEventRepository & IEventWriter,
+        /** Source of truth for fetching fresh event data — Ticketmaster */
+        private ticketmasterRepository: IEventRepository,
         private followRepository: IFollowRepository,
         private userRepository: IUserRepository
     ) {}
 
     /**
      * Get upcoming events for a specific artist.
+     *
+     * SWR flow:
+     * 1. Read from MongoDB → return immediately (even if empty/stale)
+     * 2. If stale/empty → trigger background refresh from Ticketmaster (fire-and-forget)
      */
     async getArtistEvents(artistId: string): Promise<Event[]> {
-        return await this.eventRepository.findByArtist(artistId, true);
+        const events = await this.mongoEventRepository.findByArtist(artistId, true);
+
+        const isStale = events.length === 0 || this.hasStaleEvents(events);
+
+        if (isStale && !this.inFlightArtists.has(artistId)) {
+            this.inFlightArtists.add(artistId);
+            this.backgroundRefreshArtistEvents(artistId).finally(() =>
+                this.inFlightArtists.delete(artistId)
+            );
+        }
+
+        return events;
     }
 
     /**
      * Get events near the user's saved location, filtered by followed artists.
+     *
+     * SWR flow:
+     * 1. Read from MongoDB → return immediately (even if empty/stale)
+     * 2. For any followed artist with no fresh events, trigger a background refresh
      */
     async getEventsNearUser(userId: string): Promise<Event[]> {
         const user = await this.userRepository.findById(userId);
@@ -44,17 +75,18 @@ export class EventService {
         const [longitude, latitude] = user.location.coordinates;
         const radiusKm = user.radiusKm || 50;
 
-        return await this.eventRepository.findNearLocation(
-            longitude,
-            latitude,
-            radiusKm,
-            artistIds
-        );
+        this.triggerStaleArtistRefreshes(artistIds);
+
+        return this.mongoEventRepository.findNearLocation(longitude, latitude, radiusKm, artistIds);
     }
 
     /**
      * Search events by explicit coordinates and radius,
      * filtered by the user's followed artists.
+     *
+     * SWR flow:
+     * 1. Read from MongoDB → return immediately (even if empty/stale)
+     * 2. For any followed artist with no fresh events, trigger a background refresh
      */
     async searchEvents(
         userId: string,
@@ -68,35 +100,87 @@ export class EventService {
             return [];
         }
 
-        return await this.eventRepository.findNearLocation(
-            longitude,
-            latitude,
-            radiusKm,
-            artistIds
-        );
+        this.triggerStaleArtistRefreshes(artistIds);
+
+        return this.mongoEventRepository.findNearLocation(longitude, latitude, radiusKm, artistIds);
     }
 
     /**
      * Explore all music events in an area — no artist filter.
-     * Uses Ticketmaster's native geo search.
+     * Queries Ticketmaster directly since this is a general discovery feature
+     * and not tied to specific followed artists.
      */
-    async exploreEvents(
-        longitude: number,
-        latitude: number,
-        radiusKm: number
-    ): Promise<Event[]> {
-        return await this.eventRepository.findNearLocation(
-            longitude,
-            latitude,
-            radiusKm
-            // No artistIds → general search
-        );
+    async exploreEvents(longitude: number, latitude: number, radiusKm: number): Promise<Event[]> {
+        return this.ticketmasterRepository.findNearLocation(longitude, latitude, radiusKm);
     }
 
     /**
      * Get a single event by ID.
+     * Tries MongoDB first, falls back to Ticketmaster in-memory cache.
      */
     async getEventById(eventId: string): Promise<Event | null> {
-        return await this.eventRepository.findById(eventId);
+        const fromMongo = await this.mongoEventRepository.findById(eventId);
+        if (fromMongo) return fromMongo;
+
+        return this.ticketmasterRepository.findById(eventId);
+    }
+
+    // -------------------------------------------------------------------------
+    // Private helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Fire-and-forget: trigger background refreshes for any artist in the list
+     * that has no fresh events in MongoDB. Non-blocking.
+     */
+    private triggerStaleArtistRefreshes(artistIds: string[]): void {
+        const ttlMs = (env.EVENT_CACHE_TTL || 86400) * 1000;
+
+        this.mongoEventRepository
+            .findArtistIdsNeedingRefresh(artistIds, ttlMs)
+            .then((staleIds) => {
+                for (const artistId of staleIds) {
+                    if (!this.inFlightArtists.has(artistId)) {
+                        this.inFlightArtists.add(artistId);
+                        this.backgroundRefreshArtistEvents(artistId).finally(() =>
+                            this.inFlightArtists.delete(artistId)
+                        );
+                    }
+                }
+            })
+            .catch((err) => {
+                logger.error('Failed to check stale artist events', {
+                    error: err instanceof Error ? err.message : 'Unknown error',
+                });
+            });
+    }
+
+    private hasStaleEvents(events: Event[]): boolean {
+        const ttlMs = (env.EVENT_CACHE_TTL || 86400) * 1000;
+        return events.some((e) => Date.now() - e.lastChecked.getTime() > ttlMs);
+    }
+
+    private async backgroundRefreshArtistEvents(artistId: string): Promise<void> {
+        try {
+            logger.info('Background event refresh start', { artistId });
+
+            // Fetch all events (including past) to map correctly, then filter after persisting
+            const events = await this.ticketmasterRepository.findByArtist(artistId, false);
+
+            if (events.length > 0) {
+                await this.mongoEventRepository.upsertMany(events);
+                await this.mongoEventRepository.deletePastEvents(artistId);
+            }
+
+            logger.info('Background event refresh complete', {
+                artistId,
+                count: events.length,
+            });
+        } catch (error) {
+            logger.error('Background event refresh failed', {
+                artistId,
+                error: error instanceof Error ? error.message : 'Unknown error',
+            });
+        }
     }
 }

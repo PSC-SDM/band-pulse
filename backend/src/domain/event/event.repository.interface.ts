@@ -31,3 +31,26 @@ export interface IEventRepository {
      */
     findById(id: string): Promise<Event | null>;
 }
+
+/**
+ * Write contract for persistent event repositories (MongoDB).
+ * Only implemented by MongoEventRepository.
+ */
+export interface IEventWriter {
+    /**
+     * Upsert a batch of events by externalId.
+     */
+    upsertMany(events: Event[]): Promise<{ upserted: number; modified: number }>;
+
+    /**
+     * Delete past events for an artist (cleanup after sync).
+     */
+    deletePastEvents(artistId: string): Promise<number>;
+
+    /**
+     * Return the subset of artistIds that have no upcoming events
+     * or whose events were last checked before the TTL cutoff.
+     * Used by the SWR pattern to decide which artists need a background refresh.
+     */
+    findArtistIdsNeedingRefresh(artistIds: string[], ttlMs: number): Promise<string[]>;
+}

@@ -33,7 +33,7 @@ export class ArtistController {
 
             const { q, limit = 10 } = validation.data;
 
-            const artists = await this.artistService.searchArtists(q, limit);
+            const { artists, refreshPending } = await this.artistService.searchArtists(q, limit);
 
             // Get follow status for all results
             const artistIds = artists.map(a => a._id!.toString());
@@ -47,6 +47,9 @@ export class ArtistController {
                 toArtistResponse(artist, followStatus.get(artist._id!.toString()))
             );
 
+            // Inform the client if a background refresh is in progress.
+            // When true, the client can re-poll after ~2s to get updated results.
+            res.setHeader('X-Refresh-Pending', refreshPending ? 'true' : 'false');
             res.json(response);
         } catch (error) {
             logger.error('Artist search error', {

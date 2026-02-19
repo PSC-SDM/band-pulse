@@ -22,6 +22,14 @@ async function fetchWithAuth<T>(
         credentials: 'include',
     });
 
+    if (response.status === 401) {
+        // Token expired or invalid — sign out and redirect to login
+        if (typeof window !== 'undefined') {
+            window.location.href = '/api/auth/signout?callbackUrl=' + encodeURIComponent('/login');
+        }
+        throw new Error('Session expired. Please log in again.');
+    }
+
     if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Unknown error' }));
         throw new Error(error.error || `Request failed: ${response.status}`);
