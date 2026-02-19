@@ -28,12 +28,7 @@ export default function Header() {
                     onMouseEnter={() => logoRef.current?.startAnimation()}
                     onMouseLeave={() => logoRef.current?.stopAnimation()}
                 >
-                    <div className="relative w-9 h-9 bg-prussian flex items-center justify-center overflow-hidden
-                                  hover:bg-prussian-light transition-colors duration-300">
-                        <AnimatedActivity ref={logoRef} size={20} className="relative z-10" />
-                        {/* Hover effect */}
-                        <div className="absolute bottom-0 left-0 w-full h-0 bg-orange/10 hover:h-full transition-all duration-300" />
-                    </div>
+                    <AnimatedActivity ref={logoRef} size={20} />
                     <span className="font-display text-sm tracking-[0.15em] text-white">
                         BANDPULSE
                     </span>

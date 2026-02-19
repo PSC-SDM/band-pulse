@@ -30,10 +30,7 @@ export default function Footer() {
                             onMouseEnter={() => logoRef.current?.startAnimation()}
                             onMouseLeave={() => logoRef.current?.stopAnimation()}
                         >
-                            <div className="w-8 h-8 bg-night flex items-center justify-center
-                                          hover:bg-night/80 transition-colors">
-                                <AnimatedActivity ref={logoRef} size={16} />
-                            </div>
+                            <AnimatedActivity ref={logoRef} size={16} />
                             <span className="font-display text-xs tracking-[0.15em] text-alabaster">
                                 BANDPULSE
                             </span>
@@ -45,22 +42,22 @@ export default function Footer() {
 
                     {/* Navigation */}
                     <nav className="flex items-center gap-8">
-                        <Link 
-                            href="/privacy" 
+                        <Link
+                            href="/privacy"
                             className="group flex items-center gap-2 font-body text-sm text-alabaster/50 hover:text-white transition-colors"
                         >
                             <div className="w-1 h-1 bg-alabaster/30 group-hover:bg-orange transition-colors" />
                             Privacy
                         </Link>
-                        <Link 
-                            href="/terms" 
+                        <Link
+                            href="/terms"
                             className="group flex items-center gap-2 font-body text-sm text-alabaster/50 hover:text-white transition-colors"
                         >
                             <div className="w-1 h-1 bg-alabaster/30 group-hover:bg-orange transition-colors" />
                             Terms
                         </Link>
-                        <Link 
-                            href="/contact" 
+                        <Link
+                            href="/contact"
                             className="group flex items-center gap-2 font-body text-sm text-alabaster/50 hover:text-white transition-colors"
                         >
                             <div className="w-1 h-1 bg-alabaster/30 group-hover:bg-orange transition-colors" />
