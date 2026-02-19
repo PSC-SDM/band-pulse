@@ -4,10 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Icon } from '@iconify/react';
+import { useRef } from 'react';
+import { AnimatedActivity, type AnimatedActivityHandle } from '@/components/logo/AnimatedActivity';
 
 export default function Header() {
     const { data: session, status } = useSession();
     const pathname = usePathname();
+    const logoRef = useRef<AnimatedActivityHandle>(null);
     const isAuthenticated = status === 'authenticated';
     const isLoading = status === 'loading';
 
@@ -19,12 +22,17 @@ export default function Header() {
         <header className="sticky top-0 z-50 bg-night/95 backdrop-blur-md border-b border-prussian-light/30">
             <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-3 group">
+                <Link
+                    href="/"
+                    className="flex items-center gap-3"
+                    onMouseEnter={() => logoRef.current?.startAnimation()}
+                    onMouseLeave={() => logoRef.current?.stopAnimation()}
+                >
                     <div className="relative w-9 h-9 bg-prussian flex items-center justify-center overflow-hidden
-                                  group-hover:bg-prussian-light transition-colors duration-300">
-                        <Icon icon="mdi:pulse" className="text-lg text-orange relative z-10" />
+                                  hover:bg-prussian-light transition-colors duration-300">
+                        <AnimatedActivity ref={logoRef} size={20} className="relative z-10" />
                         {/* Hover effect */}
-                        <div className="absolute bottom-0 left-0 w-full h-0 bg-orange/10 group-hover:h-full transition-all duration-300" />
+                        <div className="absolute bottom-0 left-0 w-full h-0 bg-orange/10 hover:h-full transition-all duration-300" />
                     </div>
                     <span className="font-display text-sm tracking-[0.15em] text-white">
                         BANDPULSE

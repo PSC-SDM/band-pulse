@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Icon } from '@iconify/react';
+import { useRef } from 'react';
+import { AnimatedActivity, type AnimatedActivityHandle } from '@/components/logo/AnimatedActivity';
 
 export default function Footer() {
     const pathname = usePathname();
+    const logoRef = useRef<AnimatedActivityHandle>(null);
 
     // No mostrar footer en login/register
     const hideOnRoutes = ['/login', '/register'];
@@ -22,10 +24,15 @@ export default function Footer() {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                     {/* Logo and tagline */}
                     <div className="flex flex-col gap-3">
-                        <Link href="/" className="flex items-center gap-3 group">
+                        <Link
+                            href="/"
+                            className="flex items-center gap-3"
+                            onMouseEnter={() => logoRef.current?.startAnimation()}
+                            onMouseLeave={() => logoRef.current?.stopAnimation()}
+                        >
                             <div className="w-8 h-8 bg-night flex items-center justify-center
-                                          group-hover:bg-night/80 transition-colors">
-                                <Icon icon="mdi:pulse" className="text-sm text-orange" />
+                                          hover:bg-night/80 transition-colors">
+                                <AnimatedActivity ref={logoRef} size={16} />
                             </div>
                             <span className="font-display text-xs tracking-[0.15em] text-alabaster">
                                 BANDPULSE
