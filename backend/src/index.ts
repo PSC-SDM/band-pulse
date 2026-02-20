@@ -15,7 +15,13 @@ import { MongoArtistRepository } from './infrastructure/repositories/mongodb-art
 import { MongoFollowRepository } from './infrastructure/repositories/mongodb-follow.repository';
 import { MongoUserRepository } from './infrastructure/repositories/mongodb-user.repository';
 import { MongoEventRepository } from './infrastructure/repositories/mongodb-event.repository';
+import { MongoNotificationRepository } from './infrastructure/repositories/mongodb-notification.repository';
 import { TicketmasterEventRepository } from './infrastructure/repositories/ticketmaster-event.repository';
+
+// Infrastructure - Email & Scheduler
+import { EmailService } from './infrastructure/email/email.service';
+import { NotificationWorker } from './infrastructure/workers/notification.worker';
+import { Scheduler } from './infrastructure/scheduler';
 
 // Application Services
 import { ArtistService } from './application/artist/artist.service';
@@ -23,18 +29,21 @@ import { FollowService } from './application/follow/follow.service';
 import { AuthService } from './application/auth/auth.service';
 import { UserService } from './application/user/user.service';
 import { EventService } from './application/event/event.service';
+import { NotificationService } from './application/notification/notification.service';
 
 // Interface Layer - Controllers
 import { ArtistController } from './interfaces/http/controllers/artist.controller';
 import { AuthController } from './interfaces/http/controllers/auth.controller';
 import { UserController } from './interfaces/http/controllers/user.controller';
 import { EventController } from './interfaces/http/controllers/event.controller';
+import { NotificationController } from './interfaces/http/controllers/notification.controller';
 
 // Interface Layer - Routes
 import { createArtistRoutes } from './interfaces/http/routes/artist.routes';
 import { createAuthRoutes } from './interfaces/http/routes/auth.routes';
 import { createUserRoutes } from './interfaces/http/routes/user.routes';
 import { createEventRoutes } from './interfaces/http/routes/event.routes';
+import { createNotificationRoutes } from './interfaces/http/routes/notification.routes';
 
 // Interface Layer - Middleware
 import { errorHandler } from './interfaces/http/middleware/error.middleware';
@@ -48,6 +57,7 @@ const artistRepository = new MongoArtistRepository();
 const followRepository = new MongoFollowRepository();
 const userRepository = new MongoUserRepository();
 const mongoEventRepository = new MongoEventRepository();
+const notificationRepository = new MongoNotificationRepository();
 const ticketmasterEventRepository = new TicketmasterEventRepository(artistRepository);
 
 // Services
@@ -55,18 +65,32 @@ const artistService = new ArtistService(artistRepository);
 const followService = new FollowService(followRepository, artistRepository);
 const authService = new AuthService(userRepository);
 const userService = new UserService(userRepository);
+const emailService = new EmailService();
+const notificationService = new NotificationService(
+    notificationRepository,
+    followRepository,
+    userRepository,
+    mongoEventRepository,
+    emailService,
+);
 const eventService = new EventService(
     mongoEventRepository,        // primary read/write store (MongoDB)
     ticketmasterEventRepository, // source for background refresh + explore
     followRepository,
-    userRepository
+    userRepository,
+    notificationService,         // triggers notifications when new concerts are found
 );
+
+// Workers & Scheduler
+const notificationWorker = new NotificationWorker(notificationService);
+const scheduler = new Scheduler(notificationWorker);
 
 // Controllers
 const artistController = new ArtistController(artistService, followService);
 const authController = new AuthController(authService);
 const userController = new UserController(userService);
 const eventController = new EventController(eventService);
+const notificationController = new NotificationController(notificationService);
 
 // Configure OAuth with injected repository
 configureOAuth(userRepository);
@@ -138,6 +162,7 @@ app.use('/api/auth', createAuthRoutes(authController));
 app.use('/api/users', createUserRoutes(userController));
 app.use('/api/artists', createArtistRoutes(artistController));
 app.use('/api/events', createEventRoutes(eventController));
+app.use('/api/notifications', createNotificationRoutes(notificationController));
 
 // 404 handler
 app.use((_req: Request, res: Response) => {
@@ -162,6 +187,9 @@ async function start(): Promise<void> {
             logger.info(`Environment: ${env.NODE_ENV}`);
             logger.info(`Health check: http://localhost:${env.PORT}/health`);
         });
+
+        // Start background scheduler (daily reminders at 09:00)
+        scheduler.start();
     } catch (error) {
         logger.error('Failed to start server:', error);
         process.exit(1);

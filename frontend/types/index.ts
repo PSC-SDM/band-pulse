@@ -26,11 +26,10 @@ export interface UserLocation {
 }
 
 export interface NotificationPreferences {
-    email: boolean;
-    push: boolean;
     newConcerts: boolean;
-    priceDrops: boolean;
-    reminderDaysBefore: number;
+    tourAnnouncements: boolean;
+    concertReminders: boolean;
+    daysBeforeConcert: number;
 }
 
 // ============================================
@@ -120,11 +119,12 @@ export interface Follow {
 export interface Notification {
     _id: string;
     userId: string;
-    type: 'new_concert' | 'concert_reminder' | 'price_drop' | 'status_change';
+    type: 'new_concert' | 'concert_reminder' | 'tour_announcement';
     eventId?: string;
     artistId?: string;
+    artistName?: string;
     title: string;
-    message: string;
+    body: string;
     read: boolean;
     createdAt: string;
 }

@@ -1,6 +1,7 @@
 import { IEventRepository, IEventWriter } from '../../domain/event/event.repository.interface';
 import { IFollowRepository } from '../../domain/follow/follow.repository.interface';
 import { IUserRepository } from '../../domain/user/user.repository.interface';
+import { INotificationService } from '../notification/notification.service.interface';
 import { Event } from '../../domain/event/event.entity';
 import { env } from '../../shared/config/env';
 import { logger } from '../../shared/utils/logger';
@@ -26,7 +27,9 @@ export class EventService {
         /** Source of truth for fetching fresh event data — Ticketmaster */
         private ticketmasterRepository: IEventRepository,
         private followRepository: IFollowRepository,
-        private userRepository: IUserRepository
+        private userRepository: IUserRepository,
+        /** Optional: if provided, new concerts will trigger notifications (injected after init) */
+        private notificationService?: INotificationService
     ) {}
 
     /**
@@ -164,12 +167,26 @@ export class EventService {
         try {
             logger.info('Background event refresh start', { artistId });
 
+            const refreshedAt = new Date();
+
             // Fetch all events (including past) to map correctly, then filter after persisting
             const events = await this.ticketmasterRepository.findByArtist(artistId, false);
 
             if (events.length > 0) {
-                await this.mongoEventRepository.upsertMany(events);
+                const result = await this.mongoEventRepository.upsertMany(events);
                 await this.mongoEventRepository.deletePastEvents(artistId);
+
+                // Notify followers about newly inserted concerts (upsertedCount > 0 = truly new)
+                if (result.upserted > 0 && this.notificationService) {
+                    this.notificationService
+                        .notifyNewConcertsForArtist(artistId, refreshedAt)
+                        .catch((err) =>
+                            logger.error('Failed to trigger new concert notifications', {
+                                artistId,
+                                error: err instanceof Error ? err.message : 'Unknown error',
+                            })
+                        );
+                }
             }
 
             logger.info('Background event refresh complete', {

@@ -2,6 +2,8 @@ import { IUserRepository } from '../../domain/user/user.repository.interface';
 import { User } from '../../domain/user/user.entity';
 import { logger } from '../../shared/utils/logger';
 
+type NotificationPreferences = NonNullable<User['notificationPreferences']>;
+
 /**
  * User Service - Business logic for user profile operations.
  */
@@ -37,6 +39,22 @@ export class UserService {
                 coordinates: [longitude, latitude],
                 radiusKm,
             });
+        }
+
+        return user;
+    }
+
+    /**
+     * Update user notification preferences (partial update — only provided fields change).
+     */
+    async updateNotificationPreferences(
+        userId: string,
+        preferences: Partial<NotificationPreferences>
+    ): Promise<User | null> {
+        const user = await this.userRepository.updateNotificationPreferences(userId, preferences);
+
+        if (user) {
+            logger.info('User notification preferences updated', { userId, preferences });
         }
 
         return user;

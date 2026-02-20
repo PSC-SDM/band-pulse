@@ -30,6 +30,23 @@ export interface IEventRepository {
      * Find a single event by ID.
      */
     findById(id: string): Promise<Event | null>;
+
+    /**
+     * Find events created after a given date.
+     * Used by NotificationService to detect newly added concerts.
+     * @param since - Only return events with createdAt >= since
+     * @param artistId - Optional: restrict to a specific artist
+     */
+    findCreatedAfter(since: Date, artistId?: string): Promise<Event[]>;
+
+    /**
+     * Find upcoming events within a date range for a set of artists.
+     * Used by NotificationService to send concert reminders.
+     * @param artistIds - Filter by these artists (empty array = all artists)
+     * @param from - Start of date range (inclusive)
+     * @param to - End of date range (inclusive)
+     */
+    findUpcomingInDateRange(artistIds: string[], from: Date, to: Date): Promise<Event[]>;
 }
 
 /**

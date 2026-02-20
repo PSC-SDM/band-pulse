@@ -6,6 +6,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { Icon } from '@iconify/react';
 import { useRef, useState, useEffect } from 'react';
 import { AnimatedActivity, type AnimatedActivityHandle } from '@/components/logo/AnimatedActivity';
+import NotificationBell from '@/components/notifications/NotificationBell';
 
 const NAV_LINKS = [
     { href: '/dashboard', icon: 'mdi:view-dashboard', label: 'Dashboard', exact: true },
@@ -22,6 +23,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const isAuthenticated = status === 'authenticated';
     const isLoading = status === 'loading';
+    const token = (session as any)?.accessToken as string | undefined;
 
     // All hooks must be called before any conditional returns
     useEffect(() => {
@@ -78,6 +80,12 @@ export default function Header() {
 
                             <div className="w-px h-5 bg-prussian-light/50 mx-3" />
 
+                            {token && (
+                                <div className="mr-2">
+                                    <NotificationBell token={token} />
+                                </div>
+                            )}
+
                             <span className="hidden lg:block font-body text-xs text-alabaster/40 mr-3">
                                 {session?.user?.email}
                             </span>
@@ -113,6 +121,9 @@ export default function Header() {
                         >
                             Sign in
                         </Link>
+                    )}
+                    {isAuthenticated && token && (
+                        <NotificationBell token={token} />
                     )}
                     {isAuthenticated && (
                         <button

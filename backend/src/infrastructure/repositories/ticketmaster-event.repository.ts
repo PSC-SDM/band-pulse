@@ -503,4 +503,15 @@ export class TicketmasterEventRepository implements IEventRepository {
 
         return allEvents.slice(0, 200);
     }
+
+    // These methods are only meaningful for persistent stores (MongoDB).
+    // Ticketmaster is a live API source — returning empty arrays is correct.
+
+    async findCreatedAfter(_since: Date, _artistId?: string): Promise<Event[]> {
+        return [];
+    }
+
+    async findUpcomingInDateRange(_artistIds: string[], _from: Date, _to: Date): Promise<Event[]> {
+        return [];
+    }
 }

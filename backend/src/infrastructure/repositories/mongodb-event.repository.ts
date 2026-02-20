@@ -109,6 +109,27 @@ export class MongoEventRepository implements IEventRepository, IEventWriter {
         return result.deletedCount;
     }
 
+    async findCreatedAfter(since: Date, artistId?: string): Promise<Event[]> {
+        const filter: Record<string, unknown> = { createdAt: { $gte: since } };
+        if (artistId) {
+            filter['artistId'] = new ObjectId(artistId);
+        }
+        return this.collection.find(filter as Filter<Event>).toArray();
+    }
+
+    async findUpcomingInDateRange(artistIds: string[], from: Date, to: Date): Promise<Event[]> {
+        const filter: Record<string, unknown> = {
+            date: { $gte: from, $lte: to },
+        };
+        if (artistIds.length > 0) {
+            filter['artistId'] = { $in: artistIds.map((id) => new ObjectId(id)) };
+        }
+        return this.collection
+            .find(filter as Filter<Event>)
+            .sort({ date: 1 })
+            .toArray();
+    }
+
     async findArtistIdsNeedingRefresh(artistIds: string[], ttlMs: number): Promise<string[]> {
         if (artistIds.length === 0) return [];
 

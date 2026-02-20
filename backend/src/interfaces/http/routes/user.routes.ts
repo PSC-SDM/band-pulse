@@ -11,6 +11,7 @@ export function createUserRoutes(userController: UserController): Router {
 
     router.get('/me', authenticate, userController.getProfile);
     router.patch('/me/location', authenticate, userController.updateLocation);
+    router.patch('/me/notification-preferences', authenticate, userController.updateNotificationPreferences);
 
     return router;
 }

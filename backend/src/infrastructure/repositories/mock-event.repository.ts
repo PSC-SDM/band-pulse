@@ -168,4 +168,13 @@ export class MockEventRepository implements IEventRepository {
         }
         return null;
     }
+
+    // These methods are only meaningful for persistent stores (MongoDB).
+    async findCreatedAfter(_since: Date, _artistId?: string): Promise<Event[]> {
+        return [];
+    }
+
+    async findUpcomingInDateRange(_artistIds: string[], _from: Date, _to: Date): Promise<Event[]> {
+        return [];
+    }
 }

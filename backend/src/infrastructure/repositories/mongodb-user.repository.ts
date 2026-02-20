@@ -89,4 +89,22 @@ export class MongoUserRepository implements IUserRepository {
 
         return result;
     }
+
+    async updateNotificationPreferences(
+        userId: string,
+        preferences: Partial<User['notificationPreferences']>
+    ): Promise<User | null> {
+        const setFields: Record<string, unknown> = { updatedAt: new Date() };
+        for (const [key, value] of Object.entries(preferences ?? {})) {
+            setFields[`notificationPreferences.${key}`] = value;
+        }
+
+        const result = await this.collection.findOneAndUpdate(
+            { _id: new ObjectId(userId) },
+            { $set: setFields },
+            { returnDocument: 'after' }
+        );
+
+        return result;
+    }
 }

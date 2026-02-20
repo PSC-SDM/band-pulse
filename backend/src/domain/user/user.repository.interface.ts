@@ -11,4 +11,5 @@ export interface IUserRepository {
     createWithPassword(email: string, name: string, password: string): Promise<User>;
     verifyPassword(email: string, password: string): Promise<User | null>;
     updateLocation(userId: string, longitude: number, latitude: number, radiusKm: number): Promise<User | null>;
+    updateNotificationPreferences(userId: string, preferences: Partial<User['notificationPreferences']>): Promise<User | null>;
 }
