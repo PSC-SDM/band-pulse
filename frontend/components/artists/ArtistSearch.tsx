@@ -9,6 +9,8 @@ import { Artist } from '@/types/artist.types';
 interface ArtistSearchProps {
     token: string;
     onFollowChange?: (artistId: string, isFollowing: boolean) => void;
+    /** Pre-populate the search box (e.g. when navigating from a related artist card) */
+    initialQuery?: string;
 }
 
 /**
@@ -25,9 +27,9 @@ interface ArtistSearchProps {
  * - Orange accent for focus states and CTAs
  * - White/Alabaster for text hierarchy
  */
-export default function ArtistSearch({ token, onFollowChange }: ArtistSearchProps) {
+export default function ArtistSearch({ token, onFollowChange, initialQuery = '' }: ArtistSearchProps) {
     const router = useRouter();
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState(initialQuery);
     const [results, setResults] = useState<Artist[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);

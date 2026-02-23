@@ -68,6 +68,10 @@ export class ArtistController {
         try {
             const artists = await this.followService.getFollowedArtists(req.user!.userId);
 
+            // Trigger Spotify enrichment for any followed artist that needs it.
+            // This path bypasses ArtistService.getArtistById, so we do it explicitly.
+            this.artistService.enrichIfStale(artists);
+
             const response = artists.map(artist => toArtistResponse(artist, true));
 
             res.json(response);

@@ -19,7 +19,16 @@ export interface ArtistArea {
 export interface ArtistMetadata {
     popularity?: number;
     followerCount?: number;
+    spotifyUrl?: string;
     [key: string]: unknown;
+}
+
+export interface RelatedArtist {
+    spotifyId: string;
+    name: string;
+    imageUrl?: string;
+    genres?: string[];
+    followerCount?: number;
 }
 
 export interface Artist {
@@ -30,7 +39,13 @@ export interface Artist {
     area?: ArtistArea;
     imageUrl?: string;
     genres?: string[];
+    /** Short biography from MusicBrainz annotation */
+    description?: string;
     metadata?: ArtistMetadata;
+    /** Artists related to this one (from Spotify) */
+    relatedArtists?: RelatedArtist[];
+    /** Direct link to the artist's Spotify profile */
+    spotifyUrl?: string;
     isFollowing?: boolean;
     followerCount?: number;
 }

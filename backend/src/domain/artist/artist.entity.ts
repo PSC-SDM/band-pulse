@@ -60,6 +60,19 @@ export interface ArtistMetadata {
 }
 
 /**
+ * A related artist as returned by the Spotify related-artists endpoint.
+ * Stored as embedded documents on the Artist.
+ */
+export interface RelatedArtist {
+    /** Spotify artist ID */
+    spotifyId: string;
+    name: string;
+    imageUrl?: string;
+    genres?: string[];
+    followerCount?: number;
+}
+
+/**
  * Artist domain entity.
  */
 export interface Artist {
@@ -80,20 +93,29 @@ export interface Artist {
     /** Country/region of origin */
     area?: ArtistArea;
 
-    /** Artist image URL - to be populated by enrichment (Spotify, etc.) */
+    /** Artist image URL - populated by Spotify enrichment */
     imageUrl?: string;
 
-    /** Music genres - to be populated by enrichment */
+    /** Music genres - populated by Spotify enrichment */
     genres?: string[];
+
+    /** Short biography / disambiguation - populated by MusicBrainz annotation */
+    description?: string;
 
     /** Enrichment metadata from external services */
     metadata?: ArtistMetadata;
 
-    /** Timestamp of last external API fetch (for cache validation) */
+    /** Artists related to this one - populated by Spotify enrichment */
+    relatedArtists?: RelatedArtist[];
+
+    /** Timestamp of last MusicBrainz fetch (for cache validation) */
     lastFetchedAt: Date;
 
-    /** Source of the last fetch (e.g., 'musicbrainz', 'spotify') */
+    /** Source of the last MusicBrainz fetch (e.g., 'musicbrainz') */
     fetchSource: string;
+
+    /** Timestamp of last Spotify enrichment (separate TTL, ~24h) */
+    spotifyLastFetchedAt?: Date;
 
     /** Document creation timestamp */
     createdAt: Date;

@@ -320,7 +320,7 @@ export default function ArtistDetailPage() {
                     </section>
                 )}
 
-                {/* Genres Section (Future enrichment) */}
+                {/* Genres Section */}
                 {artist.genres && artist.genres.length > 0 && (
                     <section className="mt-8 opacity-0 animate-fade-up"
                         style={{ animationFillMode: 'forwards', animationDelay: '0.3s' }}>
@@ -331,7 +331,7 @@ export default function ArtistDetailPage() {
                             {artist.genres.map(genre => (
                                 <span
                                     key={genre}
-                                    className="px-4 py-2 bg-orange/10 text-orange rounded-lg 
+                                    className="px-4 py-2 bg-orange/10 text-orange rounded-lg
                                              font-display uppercase text-sm tracking-wider
                                              border border-orange/20"
                                 >
@@ -342,9 +342,85 @@ export default function ArtistDetailPage() {
                     </section>
                 )}
 
+                {/* Bio / Description */}
+                {artist.description && (
+                    <section className="mt-8 opacity-0 animate-fade-up"
+                        style={{ animationFillMode: 'forwards', animationDelay: '0.35s' }}>
+                        <h2 className="text-lg font-display uppercase tracking-wider text-alabaster/70 mb-4">
+                            Bio
+                        </h2>
+                        <div className="bg-prussian/50 rounded-xl p-6 border border-alabaster/10">
+                            <p className="text-alabaster/80 font-body leading-relaxed whitespace-pre-line">
+                                {artist.description}
+                            </p>
+                        </div>
+                    </section>
+                )}
+
+                {/* Related Artists */}
+                {artist.relatedArtists && artist.relatedArtists.length > 0 && (
+                    <section className="mt-8 opacity-0 animate-fade-up"
+                        style={{ animationFillMode: 'forwards', animationDelay: '0.4s' }}>
+                        <h2 className="text-lg font-display uppercase tracking-wider text-alabaster/70 mb-4">
+                            Related Artists
+                        </h2>
+                        <div className="flex gap-4 overflow-x-auto pb-2 -mx-1 px-1">
+                            {artist.relatedArtists.map(related => {
+                                const relatedInitials = related.name
+                                    .split(' ')
+                                    .map((w: string) => w[0])
+                                    .slice(0, 2)
+                                    .join('')
+                                    .toUpperCase();
+                                const formatFollowers = (count: number) => {
+                                    if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(1)}M`;
+                                    if (count >= 1_000) return `${Math.round(count / 1_000)}K`;
+                                    return count.toString();
+                                };
+                                return (
+                                    <a
+                                        key={related.spotifyId}
+                                        href={`/dashboard/artists?search=${encodeURIComponent(related.name)}`}
+                                        className="flex-shrink-0 w-36 group"
+                                    >
+                                        <div className="bg-prussian border border-white/[0.06]
+                                                       hover:border-white/10 hover:bg-[#192d50]
+                                                       transition-colors duration-150 rounded-lg p-3
+                                                       flex flex-col items-center text-center gap-2">
+                                            <div className="w-16 h-16 rounded-full overflow-hidden
+                                                           bg-night border border-white/10 flex items-center justify-center flex-shrink-0">
+                                                {related.imageUrl ? (
+                                                    <img
+                                                        src={related.imageUrl}
+                                                        alt={related.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-xs font-accent text-alabaster/40 tracking-widest select-none">
+                                                        {relatedInitials}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <p className="text-xs font-accent text-white leading-snug
+                                                         group-hover:text-orange transition-colors duration-150 line-clamp-2">
+                                                {related.name}
+                                            </p>
+                                            {related.followerCount !== undefined && related.followerCount > 0 && (
+                                                <p className="text-xs text-alabaster/40 font-body">
+                                                    {formatFollowers(related.followerCount)}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )}
+
                 {/* Upcoming Events */}
                 <section className="mt-8 opacity-0 animate-fade-up"
-                    style={{ animationFillMode: 'forwards', animationDelay: '0.4s' }}>
+                    style={{ animationFillMode: 'forwards', animationDelay: '0.5s' }}>
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-display uppercase tracking-wider text-alabaster/70">
                             Upcoming Events

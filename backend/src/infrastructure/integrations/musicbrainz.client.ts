@@ -50,6 +50,8 @@ export interface MusicBrainzArtistRaw {
         primary?: boolean;
         type?: string;
     }>;
+    /** Annotation / wiki text (available when inc=annotation is requested) */
+    annotation?: string;
     score?: number; // Search relevance score (0-100)
 }
 
@@ -74,6 +76,8 @@ export interface MusicBrainzArtist {
         primary?: boolean;
         type?: string;
     }>;
+    /** Annotation text (biography/description) from MusicBrainz */
+    annotation?: string;
     score?: number;
 }
 
@@ -109,6 +113,7 @@ function normalizeArtist(raw: MusicBrainzArtistRaw): MusicBrainzArtist {
             primary: alias.primary,
             type: alias.type,
         })),
+        annotation: raw.annotation,
         score: raw.score,
     };
 }
@@ -231,10 +236,10 @@ class MusicBrainzClient {
         try {
             logger.debug('MusicBrainz lookup request', { mbid });
 
-            // Include aliases in the lookup for complete identity data
+            // Include aliases and annotation (biography) in the lookup
             const response = await this.client.get<MusicBrainzArtistRaw>(`/artist/${mbid}`, {
                 params: {
-                    inc: 'aliases',
+                    inc: 'aliases+annotation',
                     fmt: 'json',
                 },
             });

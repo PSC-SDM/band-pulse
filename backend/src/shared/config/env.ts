@@ -20,8 +20,8 @@ const envSchema = z.object({
     GOOGLE_CALLBACK_URL: z.string().optional(),
 
     // External APIs
-    SPOTIFY_CLIENT_ID: z.string().optional(),
-    SPOTIFY_CLIENT_SECRET: z.string().optional(),
+    SPOTIFY_CLIENT_ID: z.string().min(1, 'Spotify client ID is required'),
+    SPOTIFY_CLIENT_SECRET: z.string().min(1, 'Spotify client secret is required'),
     BANDSINTOWN_APP_ID: z.string().default('bandpulse'),
 
     // Ticketmaster Discovery API
@@ -34,6 +34,8 @@ const envSchema = z.object({
     // Cache TTL (in seconds)
     ARTIST_CACHE_TTL: z.string().transform(Number).default('604800'),
     EVENT_CACHE_TTL: z.string().transform(Number).default('86400'),
+    /** Spotify enrichment TTL — shorter than MusicBrainz (followers change more often) */
+    SPOTIFY_CACHE_TTL: z.string().transform(Number).default('86400'),
 
     // Ticketmaster HTTP-level cache TTL (in seconds, default 10 min)
     // This caches raw API responses to avoid duplicate calls for the same params.

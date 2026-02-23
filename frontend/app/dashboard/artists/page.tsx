@@ -25,6 +25,12 @@ export default function ArtistsPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
 
+    // Read ?search= param client-side without useSearchParams (avoids Suspense requirement)
+    const [initialSearch] = useState<string>(() => {
+        if (typeof window === 'undefined') return '';
+        return new URLSearchParams(window.location.search).get('search') ?? '';
+    });
+
     const [followedArtists, setFollowedArtists] = useState<Artist[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -112,6 +118,7 @@ export default function ArtistsPage() {
                             <ArtistSearch
                                 token={token}
                                 onFollowChange={handleFollowChange}
+                                initialQuery={initialSearch}
                             />
                         )}
                     </div>

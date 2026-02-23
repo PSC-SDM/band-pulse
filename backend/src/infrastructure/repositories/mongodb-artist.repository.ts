@@ -2,7 +2,7 @@ import { ObjectId, Collection } from 'mongodb';
 import { getDatabase } from '../database/mongodb.connection';
 import { env } from '../../shared/config/env';
 import { Artist, ArtistAlias, ArtistArea } from '../../domain/artist/artist.entity';
-import { IArtistRepository } from '../../domain/artist/artist.repository.interface';
+import { IArtistRepository, SpotifyEnrichmentData } from '../../domain/artist/artist.repository.interface';
 import { MusicBrainzArtist } from '../integrations/musicbrainz.client';
 import { logger } from '../../shared/utils/logger';
 
@@ -56,12 +56,24 @@ export class MongoArtistRepository implements IArtistRepository {
      * Returns artists sorted by text search score.
      */
     async search(query: string, limit: number = 20): Promise<Artist[]> {
-        return await this.collection
+        console.log('[REPO DEBUG] search called with query:', query, 'limit:', limit);
+        
+        const results = await this.collection
             .find({ $text: { $search: query } })
             .project({ score: { $meta: 'textScore' } })
             .sort({ score: { $meta: 'textScore' } })
             .limit(limit)
             .toArray() as unknown as Artist[];
+        
+        console.log('[REPO DEBUG] Search returned', results.length, 'artists');
+        results.forEach((a, i) => {
+            console.log(`[REPO DEBUG] Artist ${i + 1}:`, a.name, 
+                'imageUrl:', a.imageUrl ? 'SET' : 'NOT SET',
+                'genres:', a.genres?.length ?? 0,
+                'spotifyLastFetchedAt:', a.spotifyLastFetchedAt ? 'SET' : 'NOT SET');
+        });
+        
+        return results;
     }
 
     /**
@@ -108,17 +120,24 @@ export class MongoArtistRepository implements IArtistRepository {
             iso31661: mbData.area.iso31661,
         } : undefined;
 
+        const setFields: Record<string, unknown> = {
+            name: mbData.name,
+            slug,
+            'externalIds.musicbrainz': mbData.mbid,
+            aliases,
+            area,
+            lastFetchedAt: now,
+            fetchSource: 'musicbrainz',
+            updatedAt: now,
+        };
+
+        // Persist annotation as artist description only when MB returns one
+        if (mbData.annotation) {
+            setFields['description'] = mbData.annotation;
+        }
+
         const updateDoc = {
-            $set: {
-                name: mbData.name,
-                slug,
-                'externalIds.musicbrainz': mbData.mbid,
-                aliases,
-                area,
-                lastFetchedAt: now,
-                fetchSource: 'musicbrainz',
-                updatedAt: now,
-            },
+            $set: setFields,
             $setOnInsert: {
                 createdAt: now,
             },
@@ -140,6 +159,62 @@ export class MongoArtistRepository implements IArtistRepository {
     }
 
     /**
+     * Persist Spotify enrichment data for an artist identified by MBID.
+     * Uses a targeted $set so MusicBrainz fields are never overwritten.
+     */
+    async updateSpotifyEnrichment(mbid: string, data: SpotifyEnrichmentData): Promise<void> {
+        const now = new Date();
+
+        console.log('[REPO DEBUG] updateSpotifyEnrichment called with MBID:', mbid);
+        console.log('[REPO DEBUG] Spotify data to update:', JSON.stringify({
+            spotifyId: data.spotifyId,
+            imageUrl: data.imageUrl,
+            genres: data.genres,
+            followerCount: data.followerCount,
+            popularity: data.popularity,
+            relatedArtistsCount: data.relatedArtists.length,
+        }, null, 2));
+
+        const result = await this.collection.updateOne(
+            { 'externalIds.musicbrainz': mbid },
+            {
+                $set: {
+                    'externalIds.spotify': data.spotifyId,
+                    imageUrl: data.imageUrl,
+                    genres: data.genres,
+                    'metadata.followerCount': data.followerCount,
+                    'metadata.popularity': data.popularity,
+                    'metadata.spotifyUrl': data.spotifyUrl,
+                    relatedArtists: data.relatedArtists,
+                    spotifyLastFetchedAt: now,
+                    updatedAt: now,
+                },
+            }
+        );
+
+        console.log('[REPO DEBUG] MongoDB updateOne result:', {
+            matchedCount: result.matchedCount,
+            modifiedCount: result.modifiedCount,
+            acknowledged: result.acknowledged,
+            upsertedId: result.upsertedId,
+        });
+
+        if (result.matchedCount === 0) {
+            console.log('[REPO DEBUG] WARNING: No document matched for MBID:', mbid);
+        } else if (result.modifiedCount === 0) {
+            console.log('[REPO DEBUG] WARNING: Document matched but not modified for MBID:', mbid);
+        } else {
+            console.log('[REPO DEBUG] SUCCESS: Document updated for MBID:', mbid);
+        }
+
+        logger.debug('Artist Spotify enrichment persisted', {
+            mbid,
+            spotifyId: data.spotifyId,
+            relatedCount: data.relatedArtists.length,
+        });
+    }
+
+    /**
      * Check if an artist's cached data is still valid.
      * Valid = lastFetchedAt + TTL > now
      */
@@ -151,6 +226,26 @@ export class MongoArtistRepository implements IArtistRepository {
         const cacheAge = Date.now() - artist.lastFetchedAt.getTime();
         const ttlMs = env.ARTIST_CACHE_TTL * 1000;
 
+        return cacheAge < ttlMs;
+    }
+
+    /**
+     * Check if an artist's Spotify enrichment is still fresh.
+     * Uses SPOTIFY_CACHE_TTL (default 24h) instead of the MusicBrainz TTL (7 days).
+     */
+    isSpotifyCacheValid(artist: Artist): boolean {
+        console.log('[REPO DEBUG] isSpotifyCacheValid called for artist:', artist.name);
+        console.log('[REPO DEBUG] spotifyLastFetchedAt:', artist.spotifyLastFetchedAt);
+        
+        if (!artist.spotifyLastFetchedAt) {
+            console.log('[REPO DEBUG] No spotifyLastFetchedAt - cache INVALID');
+            return false;
+        }
+
+        const cacheAge = Date.now() - artist.spotifyLastFetchedAt.getTime();
+        const ttlMs = env.SPOTIFY_CACHE_TTL * 1000;
+
+        console.log('[REPO DEBUG] Cache age:', cacheAge, 'ms, TTL:', ttlMs, 'ms, Valid:', cacheAge < ttlMs);
         return cacheAge < ttlMs;
     }
 
