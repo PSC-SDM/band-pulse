@@ -16,7 +16,7 @@ export class FollowService {
     constructor(
         private followRepository: IFollowRepository,
         private artistRepository: IArtistRepository
-    ) {}
+    ) { }
 
     /**
      * Follow an artist.
@@ -31,6 +31,37 @@ export class FollowService {
 
         if (!artist) {
             throw new Error('Artist not found');
+        }
+
+        // Check if user already follows this exact artist
+        const alreadyFollowing = await this.followRepository.exists(userId, artistId);
+        if (alreadyFollowing) {
+            throw new Error('Already following this artist');
+        }
+
+        // Check if user follows a duplicate artist (same Spotify ID)
+        if (artist.externalIds?.spotify) {
+            const followedArtists = await this.getFollowedArtists(userId);
+            const duplicateFollowed = followedArtists.find(
+                a => a.externalIds?.spotify === artist.externalIds?.spotify
+            );
+
+            if (duplicateFollowed) {
+                logger.warn('User attempted to follow duplicate artist', {
+                    userId,
+                    existingArtist: {
+                        id: duplicateFollowed._id?.toString(),
+                        name: duplicateFollowed.name,
+                        spotifyId: duplicateFollowed.externalIds?.spotify,
+                    },
+                    newArtist: {
+                        id: artistId,
+                        name: artist.name,
+                        spotifyId: artist.externalIds?.spotify,
+                    },
+                });
+                throw new Error('Already following this artist');
+            }
         }
 
         // Create follow (repository handles duplicate detection)

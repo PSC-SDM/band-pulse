@@ -23,7 +23,7 @@ export default function DashboardPage() {
                         <div className="absolute inset-0 border-2 border-orange/20 rounded-full" />
                         <div className="absolute inset-0 border-2 border-transparent border-t-orange rounded-full animate-spin" />
                     </div>
-                    <p className="mt-6 text-alabaster/60 font-body text-sm tracking-wide">Loading your radar...</p>
+                    <p className="mt-6 text-alabaster/60 font-body text-[10px] tracking-[0.2em] uppercase">Loading your radar...</p>
                 </div>
             </div>
         );
@@ -48,16 +48,22 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Hero: Your Bands + Your Pulse */}
-                <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
 
                     {/* YOUR BANDS */}
                     <a
                         href="/dashboard/artists"
                         className="group relative overflow-hidden bg-prussian/80 backdrop-blur-sm
                                    border-l-2 border-orange p-8 md:p-10
-                                   hover:bg-prussian transition-all duration-500
+                                   hover:bg-prussian hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
+                                   transition-all duration-300
                                    opacity-0 animate-fade-up stagger-1"
+                        style={{ borderRadius: '28px' }}
                     >
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                            style={{ borderRadius: '28px' }} />
+
                         {/* Decorative background */}
                         <div className="absolute inset-0 pointer-events-none overflow-hidden">
                             <div className="absolute -right-24 -bottom-24 w-48 h-48 bg-orange/5 rotate-45
@@ -74,7 +80,8 @@ export default function DashboardPage() {
 
                             {/* Icon */}
                             <div className="w-12 h-12 bg-orange/10 flex items-center justify-center mb-6
-                                          group-hover:bg-orange/20 transition-colors duration-300">
+                                          group-hover:bg-orange/20 transition-colors duration-300"
+                                style={{ borderRadius: '10px' }}>
                                 <Icon icon="mdi:account-music" className="text-2xl text-orange" />
                             </div>
 
@@ -108,9 +115,15 @@ export default function DashboardPage() {
                         href="/dashboard/your-pulse"
                         className="group relative overflow-hidden bg-prussian/60 backdrop-blur-sm
                                    border-l-2 border-transparent hover:border-orange p-8 md:p-10
-                                   transition-all duration-500
+                                   hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
+                                   transition-all duration-300
                                    opacity-0 animate-fade-up stagger-2"
+                        style={{ borderRadius: '28px' }}
                     >
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                            style={{ borderRadius: '28px' }} />
+
                         {/* Animated pulse rings (decorative) */}
                         <div className="absolute right-8 top-8 pointer-events-none">
                             <div className="relative w-16 h-16">
@@ -130,7 +143,8 @@ export default function DashboardPage() {
 
                             {/* Icon */}
                             <div className="w-12 h-12 bg-night/60 flex items-center justify-center mb-6
-                                          group-hover:bg-orange/10 transition-colors duration-300">
+                                          group-hover:bg-orange/10 transition-colors duration-300"
+                                style={{ borderRadius: '10px' }}>
                                 <Icon icon="mdi:map-marker-radius" className="text-2xl text-alabaster/50 group-hover:text-orange transition-colors duration-300" />
                             </div>
 
@@ -160,16 +174,22 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Secondary row: Explore + Notifications */}
-                <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+                <div className="grid md:grid-cols-2 gap-6">
                     <a
                         href="/dashboard/explore"
                         className="group relative overflow-hidden bg-prussian/30 backdrop-blur-sm p-5 md:p-6
                                    border-l-2 border-transparent hover:border-orange/60
-                                   transition-all duration-400 opacity-0 animate-fade-up stagger-3"
+                                   hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/20
+                                   transition-all duration-300 opacity-0 animate-fade-up stagger-3"
+                        style={{ borderRadius: '20px' }}
                     >
-                        <div className="flex items-center gap-4">
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none"
+                            style={{ borderRadius: '20px' }} />
+                        <div className="relative flex items-center gap-4">
                             <div className="w-10 h-10 bg-night/40 flex items-center justify-center flex-shrink-0
-                                          group-hover:bg-orange/10 transition-colors duration-300">
+                                          group-hover:bg-orange/10 transition-colors duration-300"
+                                style={{ borderRadius: '8px' }}>
                                 <Icon icon="mdi:compass-outline" className="text-lg text-alabaster/40 group-hover:text-orange transition-colors" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -191,11 +211,17 @@ export default function DashboardPage() {
                         href="/dashboard/settings"
                         className="group relative overflow-hidden bg-prussian/20 backdrop-blur-sm p-5 md:p-6
                                    border-l-2 border-transparent hover:border-alabaster/30
-                                   transition-all duration-400 opacity-0 animate-fade-up stagger-4"
+                                   hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/20
+                                   transition-all duration-300 opacity-0 animate-fade-up stagger-4"
+                        style={{ borderRadius: '20px' }}
                     >
-                        <div className="flex items-center gap-4">
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none"
+                            style={{ borderRadius: '20px' }} />
+                        <div className="relative flex items-center gap-4">
                             <div className="w-10 h-10 bg-night/40 flex items-center justify-center flex-shrink-0
-                                          group-hover:bg-night/60 transition-colors duration-300">
+                                          group-hover:bg-night/60 transition-colors duration-300"
+                                style={{ borderRadius: '8px' }}>
                                 <Icon icon="mdi:bell-outline" className="text-lg text-alabaster/30 group-hover:text-alabaster/60 transition-colors" />
                             </div>
                             <div className="flex-1 min-w-0">

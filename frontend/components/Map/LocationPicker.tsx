@@ -157,15 +157,25 @@ export default function LocationPicker({
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                        className="w-full px-4 py-3 bg-prussian-light border border-alabaster/20 rounded-lg text-white placeholder-alabaster/40 font-body text-sm focus:border-orange focus:outline-none transition-colors"
+                        className="w-full px-4 py-3 bg-prussian-light border border-alabaster/20 text-white placeholder-alabaster/40
+                                 font-body text-sm focus:border-orange focus:outline-none transition-colors"
+                        style={{ borderRadius: '20px' }}
                     />
                     {searchResults.length > 0 && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-prussian border border-alabaster/20 rounded-lg overflow-hidden z-[1000] shadow-xl">
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-prussian border border-alabaster/20
+                                      overflow-hidden z-[200] shadow-2xl shadow-black/60"
+                            style={{ borderRadius: '24px' }}>
+                            {/* Depth overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                                style={{ borderRadius: '24px' }} />
                             {searchResults.map((result, index) => (
                                 <button
                                     key={index}
                                     onClick={() => selectSearchResult(result)}
-                                    className="w-full text-left px-4 py-3 text-sm text-alabaster hover:bg-prussian-light hover:text-orange transition-colors border-b border-alabaster/10 last:border-0 font-body"
+                                    className="relative w-full text-left px-4 py-3 text-sm text-alabaster hover:bg-prussian-light hover:text-orange
+                                             transition-colors border-b border-alabaster/10 last:border-0 font-body
+                                             before:absolute before:left-0 before:top-0 before:bottom-0 before:w-0.5
+                                             before:bg-orange before:opacity-0 hover:before:opacity-100 before:transition-opacity"
                                 >
                                     {result.display_name}
                                 </button>
@@ -176,14 +186,20 @@ export default function LocationPicker({
                 <button
                     onClick={handleSearch}
                     disabled={searching || !searchQuery.trim()}
-                    className="px-5 py-3 bg-orange text-night font-body font-semibold rounded-lg hover:bg-orange-light disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm"
+                    className="px-5 py-3 bg-orange text-night font-body font-semibold hover:bg-orange-light hover:scale-105
+                             disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100
+                             transition-all duration-200 text-sm"
+                    style={{ borderRadius: '12px' }}
                 >
                     {searching ? '...' : 'Search'}
                 </button>
                 <button
                     onClick={handleUseCurrentLocation}
                     disabled={geolocating}
-                    className="px-4 py-3 border border-alabaster/20 text-alabaster rounded-lg hover:border-orange hover:text-orange disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-3 border border-alabaster/20 text-alabaster hover:border-orange hover:text-orange hover:scale-105
+                             disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100
+                             transition-all duration-200"
+                    style={{ borderRadius: '12px' }}
                     title="Use my current location"
                 >
                     {geolocating ? (
@@ -197,13 +213,18 @@ export default function LocationPicker({
             </div>
 
             {/* Mapa */}
-            <div className="relative h-[500px] w-full rounded-lg overflow-hidden border border-alabaster/20">
+            <div className="relative h-[500px] w-full overflow-hidden border border-alabaster/20"
+                style={{ borderRadius: '28px' }}>
                 <div ref={mapContainerRef} className="h-full w-full" />
                 {!mapReady && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-prussian-light">
-                        <div className="text-center">
+                    <div className="absolute inset-0 flex items-center justify-center bg-prussian-light"
+                        style={{ borderRadius: '28px' }}>
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                            style={{ borderRadius: '28px' }} />
+                        <div className="relative text-center">
                             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange border-r-transparent" />
-                            <p className="mt-3 text-alabaster/60 font-body text-sm">Loading map...</p>
+                            <p className="mt-3 text-alabaster/60 font-body text-[10px] tracking-[0.2em] uppercase">Loading map...</p>
                         </div>
                     </div>
                 )}
@@ -213,7 +234,7 @@ export default function LocationPicker({
             <div className="space-y-4">
                 <div>
                     <label className="flex items-center justify-between text-sm font-body mb-3">
-                        <span className="text-alabaster">Search Radius</span>
+                        <span className="text-alabaster/70 text-[10px] tracking-[0.2em] uppercase">Search Radius</span>
                         <span className="text-orange font-semibold text-lg font-display">{radius} km</span>
                     </label>
                     <input
@@ -234,21 +255,23 @@ export default function LocationPicker({
 
                 <div className="grid grid-cols-2 gap-3">
                     <div>
-                        <label className="text-xs text-alabaster/60 font-body mb-1 block">Latitude</label>
+                        <label className="text-[10px] tracking-[0.2em] text-alabaster/60 font-display uppercase mb-1 block">Latitude</label>
                         <input
                             type="number"
                             value={position[0].toFixed(6)}
                             readOnly
-                            className="w-full px-3 py-2.5 text-sm border border-alabaster/20 rounded-lg bg-prussian-light text-alabaster font-display"
+                            className="w-full px-3 py-2.5 text-sm border border-alabaster/20 bg-prussian-light text-alabaster font-display"
+                            style={{ borderRadius: '12px' }}
                         />
                     </div>
                     <div>
-                        <label className="text-xs text-alabaster/60 font-body mb-1 block">Longitude</label>
+                        <label className="text-[10px] tracking-[0.2em] text-alabaster/60 font-display uppercase mb-1 block">Longitude</label>
                         <input
                             type="number"
                             value={position[1].toFixed(6)}
                             readOnly
-                            className="w-full px-3 py-2.5 text-sm border border-alabaster/20 rounded-lg bg-prussian-light text-alabaster font-display"
+                            className="w-full px-3 py-2.5 text-sm border border-alabaster/20 bg-prussian-light text-alabaster font-display"
+                            style={{ borderRadius: '12px' }}
                         />
                     </div>
                 </div>

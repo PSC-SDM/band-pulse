@@ -171,6 +171,7 @@ export default function NotificationBell({ token }: NotificationBellProps) {
                         ? 'border-orange/50 text-orange bg-prussian/60'
                         : 'border-transparent text-alabaster/50 hover:text-white hover:border-alabaster/20'
                     }`}
+                style={{ borderRadius: '10px' }}
             >
                 <Icon icon="mdi:bell-outline" className="text-lg" />
 
@@ -187,14 +188,20 @@ export default function NotificationBell({ token }: NotificationBellProps) {
 
             {/* Dropdown */}
             {isOpen && (
-                <div className="absolute right-0 top-full mt-2 w-80 z-50
-                                bg-prussian border border-white/[0.08] shadow-2xl shadow-night/80
-                                animate-fade-in">
+                <div className="absolute right-0 top-full mt-2 w-80 z-[200]
+                                bg-prussian border border-white/10 shadow-2xl shadow-black/60
+                                backdrop-blur-sm overflow-hidden
+                                animate-fade-in"
+                    style={{ borderRadius: '24px' }}>
+
+                    {/* Depth overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                        style={{ borderRadius: '24px' }} />
 
                     {/* Header */}
-                    <div className="flex items-center justify-between px-4 py-3
-                                    border-b border-white/[0.06]">
-                        <span className="font-display text-xs tracking-widest text-alabaster/50 uppercase">
+                    <div className="flex items-center justify-between px-5 py-3
+                                    border-b border-white/[0.06] relative">
+                        <span className="font-display text-[10px] tracking-[0.2em] text-alabaster/40 uppercase">
                             Notifications
                         </span>
                         {unreadCount > 0 && (
@@ -202,13 +209,13 @@ export default function NotificationBell({ token }: NotificationBellProps) {
                                 onClick={handleMarkAll}
                                 className="font-body text-xs text-alabaster/40 hover:text-orange transition-colors"
                             >
-                                Mark all as read
+                                Mark all read
                             </button>
                         )}
                     </div>
 
                     {/* List */}
-                    <div className="max-h-[420px] overflow-y-auto">
+                    <div className="max-h-[420px] overflow-y-auto relative">
                         {isLoadingList && (
                             <div className="flex items-center justify-center py-8">
                                 <div className="h-5 w-5 border-2 border-orange/30 border-t-orange
@@ -217,9 +224,9 @@ export default function NotificationBell({ token }: NotificationBellProps) {
                         )}
 
                         {!isLoadingList && notifications.length === 0 && (
-                            <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+                            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                                 <Icon icon="mdi:bell-check-outline"
-                                    className="text-3xl text-alabaster/20 mb-2" />
+                                    className="text-4xl text-alabaster/15 mb-3" />
                                 <p className="font-body text-sm text-alabaster/40">
                                     You&apos;re all caught up
                                 </p>
@@ -230,29 +237,33 @@ export default function NotificationBell({ token }: NotificationBellProps) {
                             <button
                                 key={notif._id}
                                 onClick={() => handleNotificationClick(notif)}
-                                className={`w-full text-left px-4 py-3 flex gap-3
-                                            border-b border-white/[0.04] last:border-0
-                                            transition-colors duration-150 group
+                                className={`w-full text-left px-5 py-3.5 flex gap-3
+                                            border-b border-white/[0.03] last:border-0
+                                            transition-all duration-200 group relative
                                             ${notif.read
-                                        ? 'bg-transparent hover:bg-prussian-light/20'
-                                        : 'bg-prussian-light/30 hover:bg-prussian-light/50'
+                                        ? 'bg-transparent hover:bg-white/[0.02]'
+                                        : 'bg-white/[0.03] hover:bg-white/[0.05]'
                                     }`}
                             >
+                                {/* Hover indicator */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange opacity-0 group-hover:opacity-100 transition-opacity" />
                                 {/* Icon */}
-                                <div className={`mt-0.5 shrink-0 ${notif.read ? 'text-alabaster/25' : 'text-orange'}`}>
+                                <div className={`mt-0.5 shrink-0 transition-colors ${notif.read ? 'text-alabaster/20' : 'text-orange'
+                                    }`}>
                                     <Icon icon={notificationIcon(notif.type)} className="text-base" />
                                 </div>
 
                                 {/* Text */}
                                 <div className="flex-1 min-w-0">
-                                    <p className={`font-body text-sm leading-snug truncate
-                                                   ${notif.read ? 'text-alabaster/50' : 'text-white'}`}>
+                                    <p className={`font-body text-sm leading-snug truncate transition-colors
+                                                   group-hover:text-orange ${notif.read ? 'text-alabaster/50' : 'text-white'
+                                        }`}>
                                         {notif.title}
                                     </p>
-                                    <p className="font-body text-xs text-alabaster/35 mt-0.5 line-clamp-2 leading-relaxed">
+                                    <p className="font-body text-xs text-alabaster/30 mt-0.5 line-clamp-2 leading-relaxed">
                                         {notif.body}
                                     </p>
-                                    <p className="font-display text-[10px] tracking-wide text-alabaster/25 mt-1 uppercase">
+                                    <p className="font-display text-[10px] tracking-wide text-alabaster/20 mt-1.5 uppercase">
                                         {timeAgo(notif.createdAt)}
                                     </p>
                                 </div>

@@ -96,6 +96,7 @@ export default function Header() {
                                          bg-prussian/50 text-alabaster/70 border-l-2 border-transparent
                                          hover:text-white hover:border-orange hover:bg-prussian
                                          transition-all duration-300"
+                                style={{ borderRadius: '10px' }}
                             >
                                 <span>Logout</span>
                                 <Icon icon="mdi:logout" className="text-base opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -131,6 +132,7 @@ export default function Header() {
                             className="flex items-center justify-center w-10 h-10 text-alabaster/80 hover:text-white
                                        border border-prussian-light/40 hover:border-orange/50
                                        transition-all duration-200"
+                            style={{ borderRadius: '10px' }}
                             aria-label="Toggle menu"
                         >
                             <Icon
@@ -144,8 +146,13 @@ export default function Header() {
 
             {/* Mobile Dropdown Menu */}
             {isMenuOpen && isAuthenticated && (
-                <div className="md:hidden absolute top-full left-0 right-0 bg-night/98 backdrop-blur-md border-b border-prussian-light/30 z-40">
-                    <div className="max-w-7xl mx-auto px-6 py-4">
+                <div className="md:hidden absolute top-full left-0 right-0 bg-night/98 backdrop-blur-md border-b border-prussian-light/30 shadow-2xl shadow-black/60 z-40"
+                    style={{ borderRadius: '0 0 24px 24px' }}>
+                    {/* Depth overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                        style={{ borderRadius: '0 0 24px 24px' }} />
+
+                    <div className="relative max-w-7xl mx-auto px-6 py-4">
                         <nav className="flex flex-col gap-1">
                             {NAV_LINKS.map(({ href, icon, label, exact }) => (
                                 <button
@@ -166,7 +173,7 @@ export default function Header() {
                             <div className="my-3 border-t border-prussian-light/30" />
 
                             <div className="px-4 py-2">
-                                <span className="font-body text-xs text-alabaster/40">
+                                <span className="font-body text-[10px] tracking-[0.2em] text-alabaster/40 uppercase">
                                     {session?.user?.email}
                                 </span>
                             </div>
@@ -177,6 +184,7 @@ export default function Header() {
                                          border-l-2 border-transparent text-alabaster/60
                                          hover:text-white hover:border-orange hover:bg-prussian/20
                                          transition-all duration-200"
+                                style={{ borderRadius: '8px' }}
                             >
                                 <Icon icon="mdi:logout" className="text-lg" />
                                 <span>Logout</span>

@@ -15,8 +15,10 @@ const EventExplorerMap = dynamic(
     {
         ssr: false,
         loading: () => (
-            <div className="h-[500px] w-full rounded-lg bg-prussian-light border border-alabaster/20 flex items-center justify-center">
-                <div className="text-center">
+            <div className="h-[500px] w-full bg-prussian-light border border-white/[0.04] flex items-center justify-center relative overflow-hidden"
+                style={{ borderRadius: '28px' }}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none" style={{ borderRadius: '28px' }} />
+                <div className="text-center relative">
                     <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-orange border-r-transparent" />
                     <p className="mt-3 text-alabaster/60 font-body text-sm">Loading map...</p>
                 </div>
@@ -245,9 +247,11 @@ export default function YourPulsePage() {
                             onClick={handleSaveLocation}
                             disabled={saving || !currentSearchRef.current}
                             className="flex items-center gap-2 px-5 py-2.5 bg-orange/10 text-orange 
-                                     border border-orange/20 rounded-lg font-display uppercase text-sm tracking-wider
-                                     hover:bg-orange hover:text-night disabled:opacity-40 disabled:cursor-not-allowed
+                                     border border-orange/20 font-display uppercase text-sm tracking-wider
+                                     hover:bg-orange hover:text-night hover:scale-105 
+                                     disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100
                                      transition-all duration-300"
+                            style={{ borderRadius: '12px' }}
                         >
                             {saving ? (
                                 <>
@@ -280,11 +284,11 @@ export default function YourPulsePage() {
                 {/* Save feedback message */}
                 {saveMessage && (
                     <div
-                        className={`mb-6 px-4 py-3 rounded-lg font-body text-sm border transition-all duration-300 ${
-                            saveMessageType === 'success'
+                        className={`mb-6 px-4 py-3 font-body text-sm border transition-all duration-300 ${saveMessageType === 'success'
                                 ? 'bg-green-900/20 text-green-400 border-green-500/30'
                                 : 'bg-red-900/20 text-red-400 border-red-500/30'
-                        }`}
+                            }`}
+                        style={{ borderRadius: '16px' }}
                     >
                         {saveMessage}
                     </div>
@@ -308,57 +312,62 @@ export default function YourPulsePage() {
                 {/* Error */}
                 {error && (
                     <div
-                        className="bg-prussian/30 rounded-xl p-8 border border-orange/20 text-center mb-8
+                        className="bg-prussian/30 p-8 border border-orange/20 text-center mb-8 relative overflow-hidden
                                   opacity-0 animate-fade-up"
-                        style={{ animationFillMode: 'forwards', animationDelay: '0.3s' }}
+                        style={{ animationFillMode: 'forwards', animationDelay: '0.3s', borderRadius: '28px' }}
                     >
-                        <div className="text-orange mb-3">
-                            <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                                />
-                            </svg>
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none" style={{ borderRadius: '28px' }} />
+                        <div className="relative">
+                            <div className="text-orange mb-3">
+                                <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                                    />
+                                </svg>
+                            </div>
+                            <p className="text-alabaster/60 font-body">{error}</p>
+                            <p className="text-alabaster/40 font-body text-sm mt-2">
+                                Make sure you are following at least one artist.
+                            </p>
                         </div>
-                        <p className="text-alabaster/60 font-body">{error}</p>
-                        <p className="text-alabaster/40 font-body text-sm mt-2">
-                            Make sure you are following at least one artist.
-                        </p>
                     </div>
                 )}
 
                 {/* Empty state */}
                 {!error && !isFetching && !isLoading && events.length === 0 && (
                     <div
-                        className="bg-prussian/30 rounded-xl p-12 border border-alabaster/10 text-center
+                        className="bg-prussian/30 p-12 border border-white/[0.04] text-center relative overflow-hidden
                                   opacity-0 animate-fade-up"
-                        style={{ animationFillMode: 'forwards', animationDelay: '0.3s' }}
+                        style={{ animationFillMode: 'forwards', animationDelay: '0.3s', borderRadius: '28px' }}
                     >
-                        <div className="text-alabaster/30 mb-4">
-                            <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent pointer-events-none" style={{ borderRadius: '28px' }} />
+                        <div className="relative">
+                            <div className="text-alabaster/20 mb-4">
+                                <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                </svg>
+                            </div>
+                            <h2 className="text-xl font-accent text-white mb-2">No Concerts Found</h2>
+                            <p className="text-alabaster/50 font-body max-w-md mx-auto mb-6">
+                                No upcoming concerts found in this area. Try increasing the radius or searching a
+                                different city.
+                            </p>
+                            <Link
+                                href="/dashboard/artists"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange/10 text-orange border border-orange/20
+                                         font-display uppercase text-sm tracking-wider
+                                         hover:bg-orange hover:text-night hover:scale-105 transition-all duration-300"
+                                style={{ borderRadius: '12px' }}
+                            >
+                                Follow More Artists
+                            </Link>
                         </div>
-                        <h2 className="text-xl font-accent text-white mb-2">No Concerts Found</h2>
-                        <p className="text-alabaster/50 font-body max-w-md mx-auto mb-6">
-                            No upcoming concerts found in this area. Try increasing the radius or searching a
-                            different city.
-                        </p>
-                        <Link
-                            href="/dashboard/artists"
-                            className="px-5 py-2.5 bg-orange/10 text-orange border border-orange/20 rounded-lg
-                                     font-display uppercase text-sm tracking-wider
-                                     hover:bg-orange hover:text-night transition-all duration-300"
-                        >
-                            Follow More Artists
-                        </Link>
                     </div>
                 )}
 
@@ -369,23 +378,23 @@ export default function YourPulsePage() {
                         style={{ animationFillMode: 'forwards', animationDelay: '0.35s' }}
                     >
                         {/* Stats bar */}
-                        <div className="flex items-center gap-6 mb-6 pb-4 border-b border-prussian-light/30">
+                        <div className="flex items-center gap-6 mb-8 pb-4 border-b border-white/[0.06]">
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 bg-orange rounded-full" />
-                                <span className="font-display text-xs tracking-wider text-alabaster/50 uppercase">
-                                    {events.length} concert{events.length !== 1 ? 's' : ''} found
+                                <span className="font-display text-[10px] tracking-[0.2em] text-alabaster/40 uppercase">
+                                    {events.length} result{events.length !== 1 ? 's' : ''}
                                 </span>
                             </div>
                         </div>
 
-                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {events.map((event, index) => (
                                 <div
                                     key={event.id}
                                     className="opacity-0 animate-fade-up"
                                     style={{
                                         animationFillMode: 'forwards',
-                                        animationDelay: `${0.4 + 0.05 * index}s`,
+                                        animationDelay: `${50 + (index * 80)}ms`,
                                     }}
                                 >
                                     <EventCard event={event} />

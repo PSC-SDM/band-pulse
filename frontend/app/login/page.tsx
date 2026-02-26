@@ -54,7 +54,8 @@ export default function LoginPage() {
                 {/* Content */}
                 <div className="relative z-10 flex flex-col justify-center p-16">
                     <div className="flex items-center gap-3 mb-8">
-                        <div className="w-10 h-10 bg-orange/20 flex items-center justify-center">
+                        <div className="w-10 h-10 bg-orange/20 flex items-center justify-center"
+                            style={{ borderRadius: '10px' }}>
                             <svg className="w-5 h-5 text-orange" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                             </svg>
@@ -98,7 +99,7 @@ export default function LoginPage() {
                     {/* Email/Password Login */}
                     <form onSubmit={handleEmailLogin} className="space-y-5 mb-8">
                         <div>
-                            <label htmlFor="email" className="block text-xs font-display tracking-wider text-alabaster/60 uppercase mb-2">
+                            <label htmlFor="email" className="block text-[10px] font-display tracking-[0.2em] text-alabaster/60 uppercase mb-2">
                                 Email
                             </label>
                             <input
@@ -110,12 +111,13 @@ export default function LoginPage() {
                                 className="w-full px-4 py-3 bg-prussian/50 text-white border-l-2 border-alabaster/20 
                                          focus:border-orange focus:bg-prussian focus:outline-none font-body
                                          transition-all duration-300"
+                                style={{ borderRadius: '20px' }}
                                 placeholder="your@email.com"
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-xs font-display tracking-wider text-alabaster/60 uppercase mb-2">
+                            <label htmlFor="password" className="block text-[10px] font-display tracking-[0.2em] text-alabaster/60 uppercase mb-2">
                                 Password
                             </label>
                             <input
@@ -127,12 +129,14 @@ export default function LoginPage() {
                                 className="w-full px-4 py-3 bg-prussian/50 text-white border-l-2 border-alabaster/20 
                                          focus:border-orange focus:bg-prussian focus:outline-none font-body
                                          transition-all duration-300"
+                                style={{ borderRadius: '20px' }}
                                 placeholder="••••••••"
                             />
                         </div>
 
                         {error && (
-                            <div className="flex items-center gap-3 p-4 bg-orange/10 border-l-2 border-orange">
+                            <div className="flex items-center gap-3 p-4 bg-orange/10 border-l-2 border-orange"
+                                style={{ borderRadius: '16px' }}>
                                 <svg className="w-5 h-5 text-orange flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>
@@ -144,7 +148,9 @@ export default function LoginPage() {
                             type="submit"
                             disabled={loading}
                             className="group relative w-full px-6 py-4 bg-orange text-night font-body font-semibold 
-                                     overflow-hidden transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                     overflow-hidden transition-all duration-200 hover:scale-105
+                                     disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
+                            style={{ borderRadius: '12px' }}
                         >
                             <span className="relative z-10">{loading ? 'Signing in...' : 'Sign in'}</span>
                             <div className="absolute inset-0 bg-orange-light transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300" />
@@ -157,7 +163,7 @@ export default function LoginPage() {
                             <div className="w-full h-px bg-gradient-to-r from-transparent via-alabaster/20 to-transparent" />
                         </div>
                         <div className="relative flex justify-center">
-                            <span className="px-4 bg-night text-alabaster/40 font-display text-xs tracking-wider uppercase">
+                            <span className="px-4 bg-night text-alabaster/40 font-display text-[10px] tracking-[0.2em] uppercase">
                                 Or continue with
                             </span>
                         </div>
@@ -168,7 +174,8 @@ export default function LoginPage() {
                         onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
                         className="group flex w-full items-center justify-center gap-3 px-6 py-4 
                                  bg-white/5 border border-alabaster/10 text-white font-body
-                                 hover:bg-white hover:text-night transition-all duration-300"
+                                 hover:bg-white hover:text-night hover:scale-105 transition-all duration-200"
+                        style={{ borderRadius: '12px' }}
                     >
                         <svg className="h-5 w-5" viewBox="0 0 24 24">
                             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -187,8 +194,8 @@ export default function LoginPage() {
                                 Sign up
                             </Link>
                         </p>
-                        <Link 
-                            href="/" 
+                        <Link
+                            href="/"
                             className="inline-flex items-center gap-2 text-sm text-alabaster/40 hover:text-white transition-colors font-body"
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

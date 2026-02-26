@@ -88,12 +88,13 @@ function DaysSelector({
                     type="button"
                     disabled={disabled}
                     onClick={() => onChange(days)}
-                    className={`px-3 py-1.5 text-sm font-body border transition-colors duration-150
+                    className={`px-3 py-1.5 text-sm font-body border transition-all duration-200
                                 disabled:opacity-40 disabled:cursor-not-allowed
                                 ${value === days
-                            ? 'bg-orange text-night border-orange font-medium'
-                            : 'bg-transparent text-alabaster/60 border-white/10 hover:border-orange/50 hover:text-alabaster'
+                            ? 'bg-orange text-night border-orange font-medium scale-105'
+                            : 'bg-transparent text-alabaster/60 border-white/10 hover:border-orange/50 hover:text-alabaster hover:scale-105'
                         }`}
+                    style={{ borderRadius: '12px' }}
                 >
                     {days}d
                 </button>
@@ -179,7 +180,7 @@ export default function SettingsPage() {
                 <div className="text-center">
                     <div className="inline-block h-10 w-10 animate-spin rounded-full
                                   border-4 border-solid border-orange border-r-transparent" />
-                    <p className="mt-4 text-alabaster font-body">Loading...</p>
+                    <p className="mt-4 text-alabaster font-body text-[10px] tracking-[0.2em] uppercase">Loading...</p>
                 </div>
             </div>
         );
@@ -210,10 +211,14 @@ export default function SettingsPage() {
                     className="mb-6 opacity-0 animate-fade-up stagger-2"
                     style={{ animationFillMode: 'forwards' }}
                 >
-                    <h2 className="text-xs font-display uppercase tracking-widest text-alabaster/40 mb-3">
+                    <h2 className="text-[10px] font-display uppercase tracking-[0.2em] text-alabaster/40 mb-3">
                         Concert Alerts
                     </h2>
-                    <div className="bg-prussian border border-white/[0.06] px-6">
+                    <div className="relative bg-prussian border border-white/[0.06] px-6"
+                        style={{ borderRadius: '28px' }}>
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                            style={{ borderRadius: '28px' }} />
                         <SettingRow
                             label="New concerts"
                             description="Get notified when an artist you follow announces a new show"
@@ -236,10 +241,14 @@ export default function SettingsPage() {
                     className="mb-8 opacity-0 animate-fade-up stagger-3"
                     style={{ animationFillMode: 'forwards' }}
                 >
-                    <h2 className="text-xs font-display uppercase tracking-widest text-alabaster/40 mb-3">
+                    <h2 className="text-[10px] font-display uppercase tracking-[0.2em] text-alabaster/40 mb-3">
                         Reminders
                     </h2>
-                    <div className="bg-prussian border border-white/[0.06] px-6">
+                    <div className="relative bg-prussian border border-white/[0.06] px-6"
+                        style={{ borderRadius: '28px' }}>
+                        {/* Depth overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
+                            style={{ borderRadius: '28px' }} />
                         <SettingRow
                             label="Concert reminders"
                             description="Send me a reminder before an upcoming show"
@@ -250,7 +259,7 @@ export default function SettingsPage() {
 
                         {/* Days before selector — only shown when reminders are enabled */}
                         {prefs.concertReminders && (
-                            <div className="py-4">
+                            <div className="relative py-4">
                                 <p className="text-white font-body text-sm font-medium mb-1">
                                     Remind me
                                     <span className="text-orange mx-1">{prefs.daysBeforeConcert}</span>
@@ -280,10 +289,11 @@ export default function SettingsPage() {
                             onClick={handleSave}
                             disabled={isSaving || isLoading}
                             className="px-8 py-3 bg-orange text-night font-body font-semibold text-sm
-                                       transition-all duration-200 hover:bg-orange-light
-                                       disabled:opacity-50 disabled:cursor-not-allowed
+                                       transition-all duration-200 hover:bg-orange-light hover:scale-105
+                                       disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100
                                        focus:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2
                                        focus-visible:ring-offset-night"
+                            style={{ borderRadius: '12px' }}
                         >
                             {isSaving ? 'Saving…' : 'Save preferences'}
                         </button>

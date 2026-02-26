@@ -121,7 +121,7 @@ export default function ArtistsPage() {
                 <section className="mb-16 opacity-0 animate-fade-up stagger-2 relative z-[100]"
                     style={{ animationFillMode: 'forwards' }}>
                     <div className="bg-prussian border border-white/[0.04] p-8 relative"
-                         style={{ borderRadius: '32px' }}>
+                        style={{ borderRadius: '32px' }}>
                         {/* Subtle depth effect */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" style={{ borderRadius: '32px' }} />
                         <h2 className="text-[10px] font-display uppercase tracking-[0.2em] text-alabaster/30 mb-5">
