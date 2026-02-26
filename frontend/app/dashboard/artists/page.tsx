@@ -13,13 +13,13 @@ import { Artist } from '@/types/artist.types';
  * 
  * Features:
  * - Search for artists (with lazy-loading from MusicBrainz)
- * - View followed artists
- * - Follow/unfollow directly from search results
+ * - View followed artists in refined grid layout
+ * - Follow/unfollow with immediate feedback
  * 
  * Style Guide compliance:
- * - Night (#000) background
- * - Prussian Blue for cards
- * - Orange for CTAs only (controlled usage)
+ * - Night (#000) background with depth
+ * - Prussian Blue for structure
+ * - Orange for temporal CTAs only
  */
 export default function ArtistsPage() {
     const { data: session, status } = useSession();
@@ -92,27 +92,40 @@ export default function ArtistsPage() {
 
     return (
         <div className="bg-night min-h-[calc(100vh-73px-65px)]">
-            <div className="mx-auto max-w-5xl px-6 py-8">
-                {/* Header */}
-                <header className="mb-8">
-                    <h1 className="text-4xl font-accent text-white mb-2 
-                                 opacity-0 animate-fade-up"
-                        style={{ animationFillMode: 'forwards' }}>
-                        Artists
-                    </h1>
-                    <p className="text-alabaster/60 font-body text-lg
+            <div className="mx-auto max-w-7xl px-6 py-10">
+                {/* Header - asymmetric layout */}
+                <header className="mb-12 max-w-3xl">
+                    <div className="flex items-end gap-6 mb-3">
+                        <h1 className="text-5xl md:text-6xl font-accent text-white leading-none
+                                     opacity-0 animate-fade-up"
+                            style={{ animationFillMode: 'forwards' }}>
+                            Artists
+                        </h1>
+                        {followedArtists.length > 0 && (
+                            <span className="text-2xl font-display text-orange tabular-nums mb-1
+                                         opacity-0 animate-fade-up stagger-1"
+                                style={{ animationFillMode: 'forwards' }}>
+                                {followedArtists.length}
+                            </span>
+                        )}
+                    </div>
+                    <p className="text-alabaster/50 font-body text-base leading-relaxed
                                 opacity-0 animate-fade-up stagger-1"
                         style={{ animationFillMode: 'forwards' }}>
-                        Search and follow your favorite artists to get notified about upcoming concerts
+                        Follow artists to track their tours and get instant notifications when they announce
+                        concerts within your radius
                     </p>
                 </header>
 
-                {/* Search Section */}
-                <section className="mb-12 opacity-0 animate-fade-up stagger-2 relative z-50"
+                {/* Search Section - refined */}
+                <section className="mb-16 opacity-0 animate-fade-up stagger-2 relative z-[100]"
                     style={{ animationFillMode: 'forwards' }}>
-                    <div className="bg-prussian border border-white/[0.06] p-6">
-                        <h2 className="text-xs font-display uppercase tracking-widest text-alabaster/40 mb-4">
-                            Search Artists
+                    <div className="bg-prussian border border-white/[0.04] p-8 relative"
+                         style={{ borderRadius: '32px' }}>
+                        {/* Subtle depth effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" style={{ borderRadius: '32px' }} />
+                        <h2 className="text-[10px] font-display uppercase tracking-[0.2em] text-alabaster/30 mb-5">
+                            Discover
                         </h2>
                         {token && (
                             <ArtistSearch
@@ -127,16 +140,11 @@ export default function ArtistsPage() {
                 {/* Following Section */}
                 <section className="opacity-0 animate-fade-up stagger-3 relative z-10"
                     style={{ animationFillMode: 'forwards' }}>
-                    <div className="flex items-center gap-3 mb-6">
-                        <h2 className="text-xs font-display uppercase tracking-widest text-alabaster/40">
-                            Following
+                    {followedArtists.length > 0 && (
+                        <h2 className="text-[10px] font-display uppercase tracking-[0.2em] text-alabaster/30 mb-8">
+                            Your Artists
                         </h2>
-                        {followedArtists.length > 0 && (
-                            <span className="text-xs font-body text-orange tabular-nums">
-                                {followedArtists.length}
-                            </span>
-                        )}
-                    </div>
+                    )}
 
                     {/* Error State */}
                     {error && (
@@ -151,16 +159,23 @@ export default function ArtistsPage() {
                         </div>
                     )}
 
-                    {/* Loading State */}
+                    {/* Loading State - refined skeletons */}
                     {isLoading && (
-                        <div className="grid gap-4 md:grid-cols-2">
-                            {[1, 2, 3, 4].map(i => (
-                                <div key={i} className="p-5 bg-prussian rounded-xl border border-alabaster/10 animate-pulse">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-full bg-prussian-light" />
-                                        <div className="flex-1 space-y-2">
-                                            <div className="h-5 bg-prussian-light rounded w-3/4" />
-                                            <div className="h-4 bg-prussian-light rounded w-1/2" />
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {[1, 2, 3, 4, 5, 6].map(i => (
+                                <div key={i}
+                                    className="bg-prussian border border-white/[0.04] animate-pulse relative overflow-hidden"
+                                    style={{
+                                        borderRadius: '28px',
+                                        aspectRatio: '1/1.3'
+                                    }}>
+                                    <div className="w-full aspect-square bg-prussian-light" />
+                                    <div className="p-5 space-y-3">
+                                        <div className="h-5 bg-prussian-light/70 rounded w-3/4" />
+                                        <div className="h-3 bg-prussian-light/50 rounded w-1/2" />
+                                        <div className="flex gap-2">
+                                            <div className="h-5 bg-prussian-light/30 rounded-lg w-16" />
+                                            <div className="h-5 bg-prussian-light/30 rounded-lg w-20" />
                                         </div>
                                     </div>
                                 </div>
@@ -168,32 +183,36 @@ export default function ArtistsPage() {
                         </div>
                     )}
 
-                    {/* Empty State */}
+                    {/* Empty State - refined */}
                     {!isLoading && followedArtists.length === 0 && (
-                        <div className="text-center py-16 bg-prussian/30 rounded-2xl border border-alabaster/10">
-                            <div className="text-alabaster/30 mb-4">
-                                <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                                        d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                                </svg>
+                        <div className="text-center py-24 bg-prussian/20 border border-white/[0.04] relative overflow-hidden"
+                            style={{ borderRadius: '32px' }}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.01] to-transparent" />
+                            <div className="relative z-10">
+                                <div className="text-alabaster/20 mb-6">
+                                    <svg className="w-20 h-20 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                            d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-2xl font-accent text-white mb-3">No artists yet</h3>
+                                <p className="text-alabaster/40 font-body text-sm max-w-sm mx-auto leading-relaxed">
+                                    Start discovering artists above. When you follow them, they'll appear here
+                                    and you'll receive notifications for their concerts.
+                                </p>
                             </div>
-                            <h3 className="text-xl font-accent text-white mb-2">No artists yet</h3>
-                            <p className="text-alabaster/50 font-body max-w-md mx-auto">
-                                Start by searching for your favorite artists above.
-                                Follow them to get notified when they announce concerts near you.
-                            </p>
                         </div>
                     )}
 
-                    {/* Artists Grid */}
+                    {/* Artists Grid - 3 columns on large screens */}
                     {!isLoading && followedArtists.length > 0 && token && (
-                        <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {followedArtists.map((artist, index) => (
                                 <div
                                     key={artist.id}
                                     className="opacity-0 animate-fade-up"
                                     style={{
-                                        animationDelay: `${index * 100}ms`,
+                                        animationDelay: `${50 + (index * 80)}ms`,
                                         animationFillMode: 'forwards',
                                     }}
                                 >

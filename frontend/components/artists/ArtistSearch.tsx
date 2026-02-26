@@ -140,7 +140,7 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
             className="relative w-full"
             onKeyDown={handleKeyDown}
         >
-            {/* Search Input */}
+            {/* Search Input - refined */}
             <div className="relative">
                 <input
                     ref={inputRef}
@@ -149,31 +149,32 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => results.length > 0 && setIsOpen(true)}
                     placeholder="Search for artists..."
-                    className="w-full px-5 py-4 pl-12
-                             bg-prussian border border-alabaster/20 rounded-xl
-                             text-white font-body placeholder:text-alabaster/40
-                             focus:border-orange/50 focus:ring-2 focus:ring-orange/20
+                    className="w-full px-6 py-4 pl-14
+                             bg-night/40 border border-white/10 text-white font-body text-base
+                             placeholder:text-alabaster/30
+                             focus:border-orange/40 focus:bg-night/60
                              transition-all duration-300"
+                    style={{ borderRadius: '20px' }}
                 />
 
                 {/* Search Icon */}
                 <svg
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-alabaster/50"
+                    className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-alabaster/40"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    strokeWidth={2}
                 >
                     <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     />
                 </svg>
 
                 {/* Loading Spinner */}
                 {isLoading && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2">
                         <svg className="animate-spin h-5 w-5 text-orange" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -190,71 +191,85 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
                             setIsOpen(false);
                             inputRef.current?.focus();
                         }}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-alabaster/50 hover:text-white transition-colors"
+                        className="absolute right-5 top-1/2 -translate-y-1/2 text-alabaster/40 hover:text-white transition-colors"
                         type="button"
                     >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 )}
             </div>
 
-            {/* Error Message */}
+            {/* Error Message - refined */}
             {error && (
-                <div className="mt-2 px-4 py-2 bg-orange/10 border border-orange/30 rounded-lg">
+                <div className="mt-3 px-4 py-3 bg-orange/10 border border-orange/20"
+                    style={{ borderRadius: '16px' }}>
                     <p className="text-sm text-orange font-body flex items-center gap-2">
-                        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         {error}
                     </p>
                 </div>
             )}
 
-            {/* Results Dropdown - Fixed positioning and high z-index */}
+            {/* Results Dropdown - refined with depth */}
             {isOpen && results.length > 0 && (
                 <div
-                    className="absolute left-0 right-0 mt-2 
-                             bg-night border border-alabaster/20 rounded-xl
-                             shadow-2xl shadow-black/80
-                             overflow-hidden z-[100]"
+                    className="absolute left-0 right-0 mt-3 
+                             bg-prussian border border-white/10
+                             shadow-2xl shadow-black/60
+                             overflow-hidden z-[200]
+                             backdrop-blur-sm"
+                    style={{ borderRadius: '24px' }}
                 >
+                    {/* Subtle gradient overlay for depth */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+
                     {/* Header */}
-                    <div className="px-4 py-3 border-b border-alabaster/10 bg-prussian/50">
-                        <span className="text-xs font-display uppercase tracking-wider text-alabaster/60">
-                            {results.length} artist{results.length !== 1 ? 's' : ''} found
+                    <div className="px-5 py-3 border-b border-white/5 relative">
+                        <span className="text-[10px] font-display uppercase tracking-[0.2em] text-alabaster/40">
+                            {results.length} result{results.length !== 1 ? 's' : ''}
                         </span>
                     </div>
 
                     {/* Scrollable Results */}
-                    <div className="max-h-80 overflow-y-auto overscroll-contain">
-                        {results.map((artist) => (
+                    <div className="max-h-[420px] overflow-y-auto overscroll-contain">
+                        {results.map((artist, index) => (
                             <div
                                 key={artist.id}
                                 onClick={() => handleArtistClick(artist.id)}
-                                className="flex items-center gap-3 px-4 py-3 
-                                         hover:bg-prussian/80 cursor-pointer
-                                         border-b border-alabaster/5 last:border-b-0
-                                         transition-colors duration-150"
+                                className="flex items-center gap-4 px-5 py-3.5
+                                         hover:bg-white/[0.03] cursor-pointer
+                                         border-b border-white/[0.03] last:border-b-0
+                                         transition-all duration-200 relative group"
+                                style={{
+                                    animationDelay: `${index * 40}ms`,
+                                }}
                             >
+                                {/* Hover indicator */}
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-orange opacity-0 group-hover:opacity-100 transition-opacity" />
+
                                 {/* Avatar */}
                                 <div className="relative flex-shrink-0">
                                     {artist.imageUrl ? (
                                         <img
                                             src={artist.imageUrl}
                                             alt={artist.name}
-                                            className="w-11 h-11 rounded-full object-cover ring-1 ring-alabaster/20"
+                                            className="w-12 h-12 object-cover border border-white/10"
+                                            style={{ borderRadius: '14px' }}
                                         />
                                     ) : (
-                                        <div className="w-11 h-11 rounded-full bg-prussian flex items-center justify-center ring-1 ring-alabaster/20">
-                                            <span className="text-sm font-display text-alabaster/50">
+                                        <div className="w-12 h-12 bg-night border border-white/10 flex items-center justify-center"
+                                            style={{ borderRadius: '14px' }}>
+                                            <span className="text-xs font-display text-alabaster/40 tracking-wider">
                                                 {getInitials(artist.name)}
                                             </span>
                                         </div>
                                     )}
                                     {artist.area?.iso31661 && (
-                                        <span className="absolute -bottom-0.5 -right-0.5 text-xs">
+                                        <span className="absolute -bottom-1 -right-1 text-sm drop-shadow">
                                             {getCountryFlag(artist.area.iso31661)}
                                         </span>
                                     )}
@@ -262,11 +277,12 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="font-body font-semibold text-white text-sm truncate">
+                                    <h4 className="font-body font-semibold text-white text-sm truncate mb-0.5
+                                                 group-hover:text-orange transition-colors">
                                         {artist.name}
                                     </h4>
                                     {artist.area && (
-                                        <p className="text-xs text-alabaster/50 truncate">
+                                        <p className="text-xs text-alabaster/40 font-body truncate">
                                             {artist.area.name}
                                         </p>
                                     )}
@@ -276,12 +292,13 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
                                 <button
                                     onClick={(e) => handleFollowClick(e, artist)}
                                     disabled={loadingFollow === artist.id}
-                                    className={`flex-shrink-0 px-3 py-1.5 text-xs font-display uppercase tracking-wide rounded-md
+                                    className={`flex-shrink-0 px-3.5 py-1.5 text-[10px] font-display font-bold uppercase tracking-wider
                                               transition-all duration-200 disabled:opacity-50
                                               ${artist.isFollowing
-                                            ? 'bg-prussian border border-alabaster/30 text-alabaster hover:border-orange/50 hover:text-white'
-                                            : 'bg-orange text-night hover:bg-orange-light'
+                                            ? 'bg-night border border-white/20 text-alabaster hover:border-orange/40 hover:text-white'
+                                            : 'bg-orange text-night hover:bg-orange-light hover:scale-105'
                                         }`}
+                                    style={{ borderRadius: '10px' }}
                                     type="button"
                                 >
                                     {loadingFollow === artist.id ? (
@@ -290,7 +307,7 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                         </svg>
                                     ) : artist.isFollowing ? (
-                                        'Following'
+                                        '✓'
                                     ) : (
                                         'Follow'
                                     )}
@@ -300,32 +317,37 @@ export default function ArtistSearch({ token, onFollowChange, initialQuery = '' 
                     </div>
 
                     {/* Footer hint */}
-                    <div className="px-4 py-2 border-t border-alabaster/10 bg-prussian/30">
-                        <p className="text-[10px] text-alabaster/40 font-body text-center">
-                            Click artist name to view profile · Press ESC to close
+                    <div className="px-5 py-2.5 border-t border-white/5 bg-black/20 relative">
+                        <p className="text-[9px] text-alabaster/30 font-body text-center tracking-wide">
+                            Click to view profile · ESC to close
                         </p>
                     </div>
                 </div>
             )}
 
-            {/* No Results */}
+            {/* No Results - refined */}
             {isOpen && !isLoading && query.length >= 2 && results.length === 0 && !error && (
                 <div
-                    className="absolute left-0 right-0 mt-2 
-                             bg-night border border-alabaster/20 rounded-xl
-                             p-6 text-center shadow-2xl shadow-black/80 z-[100]"
+                    className="absolute left-0 right-0 mt-3 
+                             bg-prussian border border-white/10
+                             p-8 text-center shadow-2xl shadow-black/60 z-[200]
+                             backdrop-blur-sm relative overflow-hidden"
+                    style={{ borderRadius: '24px' }}
                 >
-                    <div className="text-alabaster/30 mb-2">
-                        <svg className="w-10 h-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent" />
+                    <div className="relative">
+                        <div className="text-alabaster/20 mb-3">
+                            <svg className="w-12 h-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <p className="text-alabaster/50 font-body text-sm mb-1">
+                            No artists found for &quot;{query}&quot;
+                        </p>
+                        <p className="text-alabaster/30 text-xs font-body">
+                            Try a different search term
+                        </p>
                     </div>
-                    <p className="text-alabaster/60 font-body text-sm">
-                        No artists found for &quot;{query}&quot;
-                    </p>
-                    <p className="text-alabaster/40 text-xs font-body mt-1">
-                        Try a different search term
-                    </p>
                 </div>
             )}
         </div>

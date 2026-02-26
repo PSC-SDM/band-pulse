@@ -12,13 +12,13 @@ interface ArtistCardProps {
 }
 
 /**
- * Artist card component for display in lists and search results.
+ * Artist card component - vertical layout with prominent imagery.
  *
  * Style Guide compliance:
- * - Prussian Blue flat background, no transparency stacking
+ * - Prussian Blue structure with depth
  * - White text for primary content, Alabaster for secondary
- * - Orange only on hover for artist name (controlled usage)
- * - No decorative shapes or motion — quiet, precise, reliable
+ * - Orange only on hover for name (controlled usage)
+ * - Refined interactions: lift on hover, subtle shadows
  */
 export default function ArtistCard({
     artist,
@@ -52,74 +52,92 @@ export default function ArtistCard({
     };
 
     return (
-        <div className="group relative">
+        <div className="group relative overflow-visible">
             <Link
                 href={`/dashboard/artists/${artist.id}`}
-                className="block bg-prussian border border-white/[0.06]
-                           hover:border-white/10 hover:bg-[#192d50]
-                           transition-colors duration-150"
+                className="block relative bg-prussian border border-white/[0.04]
+                           hover:border-white/20 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
+                           transition-all duration-300 ease-out overflow-hidden
+                           before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/[0.02] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity"
+                style={{
+                    borderRadius: '28px',
+                }}
             >
-                <div className="px-5 py-4 pr-36">
-                    <div className="flex items-center gap-4">
-                        {/* Square initials avatar — no decorative clipping */}
-                        <div className="flex-shrink-0 w-11 h-11 bg-night border border-white/10
-                                       flex items-center justify-center">
-                            {artist.imageUrl ? (
-                                <img
-                                    src={artist.imageUrl}
-                                    alt={artist.name}
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <span className="text-xs font-accent text-alabaster/40 tracking-widest select-none">
-                                    {initials}
-                                </span>
-                            )}
+                {/* Avatar - Large and prominent */}
+                <div className="relative w-full aspect-square overflow-hidden bg-night/50">
+                    {artist.imageUrl ? (
+                        <>
+                            <img
+                                src={artist.imageUrl}
+                                alt={artist.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                            />
+                            {/* Gradient overlay for text legibility */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-prussian/90 via-prussian/20 to-transparent" />
+                        </>
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-prussian-light to-prussian-dark">
+                            <span className="text-5xl font-accent text-alabaster/20 tracking-wider select-none">
+                                {initials}
+                            </span>
                         </div>
+                    )}
 
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                            <h3 className="font-accent text-[15px] text-white leading-snug truncate
-                                         group-hover:text-orange transition-colors duration-150">
-                                {artist.name}
-                            </h3>
-
-                            {/* Single meta line: flag + country · genres · followers */}
-                            <div className="flex items-center gap-2 mt-0.5 min-w-0">
-                                {artist.area && (
-                                    <span className="text-xs text-alabaster/50 font-body flex items-center gap-1 flex-shrink-0">
-                                        {flag && <span>{flag}</span>}
-                                        <span>{artist.area.name}</span>
-                                    </span>
-                                )}
-
-                                {artist.area && artist.genres && artist.genres.length > 0 && (
-                                    <span className="text-alabaster/20 text-xs flex-shrink-0 select-none">·</span>
-                                )}
-
-                                {artist.genres && artist.genres.length > 0 && (
-                                    <span className="text-xs text-alabaster/35 font-body truncate">
-                                        {artist.genres.slice(0, 3).join(' · ')}
-                                    </span>
-                                )}
-
-                                {followerCount && (
-                                    <>
-                                        <span className="text-alabaster/20 text-xs flex-shrink-0 select-none">·</span>
-                                        <span className="text-xs text-alabaster/30 font-body flex-shrink-0">
-                                            {formatFollowers(followerCount)}
-                                        </span>
-                                    </>
-                                )}
-                            </div>
+                    {/* Follower count badge - temporal data, uses orange */}
+                    {followerCount && (
+                        <div className="absolute top-3 right-3 px-3 py-1 bg-night/80 backdrop-blur-sm border border-white/10"
+                            style={{ borderRadius: '12px' }}>
+                            <span className="text-[11px] font-display text-orange font-semibold tracking-wide">
+                                {formatFollowers(followerCount)}
+                            </span>
                         </div>
-                    </div>
+                    )}
                 </div>
+
+                {/* Content */}
+                <div className="p-5 relative">
+                    {/* Artist name */}
+                    <h3 className="font-accent text-lg text-white leading-tight mb-2
+                                 group-hover:text-orange transition-colors duration-200
+                                 line-clamp-2">
+                        {artist.name}
+                    </h3>
+
+                    {/* Location */}
+                    {artist.area && (
+                        <div className="flex items-center gap-1.5 mb-3">
+                            {flag && <span className="text-sm">{flag}</span>}
+                            <span className="text-xs text-alabaster/60 font-body tracking-wide">
+                                {artist.area.name}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Genres - using dots for visual separation */}
+                    {artist.genres && artist.genres.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                            {artist.genres.slice(0, 3).map((genre, i) => (
+                                <span
+                                    key={i}
+                                    className="text-[10px] font-display uppercase tracking-widest text-alabaster/40
+                                             px-2 py-1 bg-white/[0.03] border border-white/[0.06]"
+                                    style={{ borderRadius: '8px' }}
+                                >
+                                    {genre}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Subtle accent line at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent
+                              opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </Link>
 
-            {/* Follow button — outside link to avoid navigation on click */}
+            {/* Follow button - positioned over the card */}
             {showFollowButton && (
-                <div className="absolute top-1/2 -translate-y-1/2 right-4 z-10">
+                <div className="absolute top-3 left-3 z-10">
                     <FollowButton
                         artistId={artist.id}
                         initialFollowing={artist.isFollowing ?? false}
