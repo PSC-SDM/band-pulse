@@ -102,6 +102,11 @@ const MAP_STYLES = `
         padding: 2px 6px !important;
     }
     .leaflet-control-attribution a { color: rgba(252,163,17,0.5) !important; }
+    .leaflet-bottom.leaflet-right {
+        bottom: auto !important;
+        top: 50% !important;
+        transform: translateY(-50%);
+    }
 `;
 
 export default function EventExplorerMap({
