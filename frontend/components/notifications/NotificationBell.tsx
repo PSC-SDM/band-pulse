@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { Notification } from '@/types';
 import {
@@ -40,6 +41,7 @@ interface NotificationBellProps {
 const POLL_INTERVAL_MS = 30_000;
 
 export default function NotificationBell({ token }: NotificationBellProps) {
+    const router = useRouter();
     const [unreadCount, setUnreadCount] = useState(0);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isOpen, setIsOpen] = useState(false);
@@ -134,6 +136,27 @@ export default function NotificationBell({ token }: NotificationBellProps) {
         }
     };
 
+    const handleNotificationClick = async (notification: Notification) => {
+        if (!notification.read) {
+            try {
+                await markAsRead(token, notification._id);
+                setNotifications((prev) =>
+                    prev.map((n) => (n._id === notification._id ? { ...n, read: true } : n))
+                );
+                setUnreadCount((c) => Math.max(0, c - 1));
+            } catch {
+                // Non-fatal: proceed with navigation
+            }
+        }
+        setIsOpen(false);
+        if (notification.artistId) {
+            const url = notification.eventId
+                ? `/dashboard/artists/${notification.artistId}?eventId=${notification.eventId}`
+                : `/dashboard/artists/${notification.artistId}`;
+            router.push(url);
+        }
+    };
+
     // ── Render ────────────────────────────────────────────────────────────
 
     return (
@@ -206,7 +229,7 @@ export default function NotificationBell({ token }: NotificationBellProps) {
                         {!isLoadingList && notifications.map((notif) => (
                             <button
                                 key={notif._id}
-                                onClick={() => handleMarkOne(notif)}
+                                onClick={() => handleNotificationClick(notif)}
                                 className={`w-full text-left px-4 py-3 flex gap-3
                                             border-b border-white/[0.04] last:border-0
                                             transition-colors duration-150 group

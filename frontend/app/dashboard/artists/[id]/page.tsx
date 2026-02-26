@@ -38,6 +38,8 @@ export default function ArtistDetailPage() {
     const [eventsView, setEventsView] = useState<'list' | 'map'>('list');
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [targetEventId, setTargetEventId] = useState<string | null>(null);
+    const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
 
     const token = (session as any)?.accessToken as string | undefined;
 
@@ -94,6 +96,30 @@ export default function ArtistDetailPage() {
             setArtist({ ...artist, isFollowing });
         }
     };
+
+    useEffect(() => {
+        const eventId = new URLSearchParams(window.location.search).get('eventId');
+        setTargetEventId(eventId);
+    }, []);
+
+    useEffect(() => {
+        if (!targetEventId || eventsLoading || events.length === 0) return;
+
+        const scrollTimer = setTimeout(() => {
+            const element = document.getElementById(`event-${targetEventId}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setHighlightedEventId(targetEventId);
+
+                const highlightTimer = setTimeout(() => {
+                    setHighlightedEventId(null);
+                }, 2500);
+                return () => clearTimeout(highlightTimer);
+            }
+        }, 600);
+
+        return () => clearTimeout(scrollTimer);
+    }, [targetEventId, eventsLoading, events.length]);
 
     // Get country flag emoji from ISO code
     const getCountryFlag = (iso: string | undefined) => {
@@ -198,8 +224,8 @@ export default function ArtistDetailPage() {
 
                 {/* Artist Header Card */}
                 <div className="relative overflow-hidden rounded-2xl
-                              opacity-0 animate-fade-up"
-                    style={{ animationFillMode: 'forwards', animationDelay: '0.1s' }}>
+                              opacity-0 animate-fade-up sticky z-10"
+                    style={{ animationFillMode: 'forwards', animationDelay: '0.1s', top: '73px' }}>
                     {/* Background gradient */}
                     <div className="absolute inset-0 bg-gradient-to-br from-prussian via-prussian-dark to-night" />
 
@@ -477,7 +503,12 @@ export default function ArtistDetailPage() {
                     {!eventsLoading && events.length > 0 && eventsView === 'list' && (
                         <div className="space-y-3">
                             {events.map((event) => (
-                                <EventCard key={event.id} event={event} />
+                                <EventCard
+                                    key={event.id}
+                                    id={`event-${event.id}`}
+                                    event={event}
+                                    highlighted={highlightedEventId === event.id}
+                                />
                             ))}
                         </div>
                     )}

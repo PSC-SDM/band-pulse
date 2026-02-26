@@ -4,6 +4,8 @@ import { EventResponse } from '@/types/event.types';
 
 interface EventCardProps {
     event: EventResponse;
+    id?: string;
+    highlighted?: boolean;
 }
 
 /**
@@ -14,7 +16,7 @@ interface EventCardProps {
  * - Orange only for temporal elements (date badge) and CTA (tickets)
  * - Alabaster for text, controlled opacity hierarchy
  */
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, id, highlighted = false }: EventCardProps) {
     const eventDate = new Date(event.date);
 
     const dayNum = eventDate.getDate();
@@ -35,6 +37,14 @@ export default function EventCard({ event }: EventCardProps) {
     const isFewLeft = !isSoldOut && event.inventoryStatus === 'few';
 
     return (
+        <div
+            id={id}
+            className={`transition-all duration-300 rounded-sm ${
+                highlighted
+                    ? 'ring-2 ring-orange shadow-[0_0_24px_rgba(252,163,17,0.35)]'
+                    : ''
+            }`}
+        >
         <div className={`group relative overflow-hidden bg-prussian/80 backdrop-blur-sm
                         border-l-2 transition-all duration-500
                         ${isSoldOut ? 'border-red-600/40 hover:border-red-500' : 'border-transparent hover:border-orange'}`}>
@@ -147,6 +157,7 @@ export default function EventCard({ event }: EventCardProps) {
             {/* Bottom progress bar on hover */}
             <div className={`absolute bottom-0 left-0 h-0.5 w-0 group-hover:w-full transition-all duration-700
                            ${isSoldOut ? 'bg-red-500' : 'bg-orange'}`} />
+        </div>
         </div>
     );
 }
