@@ -283,7 +283,9 @@ class TicketmasterClient {
     }
 
     /**
-     * Search events for a specific artist by name.
+     * Search events for a specific artist by name or attraction ID.
+     * If attractionId is provided, it uses exact matching (preferred).
+     * Otherwise falls back to keyword search.
      */
     async searchEventsByArtistName(
         artistName: string,
@@ -291,10 +293,12 @@ class TicketmasterClient {
             size?: number;
             page?: number;
             sort?: string;
+            attractionId?: string; // Ticketmaster attraction ID for exact matching
         } = {}
     ): Promise<TmSearchResponse<TmEvent>> {
-        // Cache key based on normalized artist name + params
-        const cacheKey = `artist:${artistName.toLowerCase().trim()}:${options.size || 50}:${options.page || 0}`;
+        // Cache key based on normalized artist name + attraction ID + params
+        const idPart = options.attractionId || 'kw';
+        const cacheKey = `artist:${artistName.toLowerCase().trim()}:${idPart}:${options.size || 50}:${options.page || 0}`;
         const cached = this.responseCache.get(cacheKey);
         if (cached) {
             logger.debug('Ticketmaster artist HTTP cache hit', { artistName, cacheKey });
@@ -305,15 +309,25 @@ class TicketmasterClient {
 
         const params: Record<string, string | number> = {
             apikey: env.TICKETMASTER_API_KEY,
-            keyword: artistName,
             classificationName: 'music',
             size: options.size || 50,
             page: options.page || 0,
             sort: options.sort || 'date,asc',
         };
 
+        // Use attractionId for exact matching if available, otherwise fallback to keyword
+        if (options.attractionId) {
+            params.attractionId = options.attractionId;
+        } else {
+            params.keyword = artistName;
+        }
+
         try {
-            logger.debug('Ticketmaster artist event search (API call)', { artistName });
+            logger.debug('Ticketmaster artist event search (API call)', {
+                artistName,
+                matchType: options.attractionId ? 'attractionId' : 'keyword',
+                attractionId: options.attractionId,
+            });
 
             const response = await this.client.get<TmSearchResponse<TmEvent>>('/events.json', {
                 params,
@@ -324,6 +338,7 @@ class TicketmasterClient {
 
             logger.info('Ticketmaster artist event search completed', {
                 artistName,
+                matchType: options.attractionId ? 'attractionId' : 'keyword',
                 total,
                 returned,
             });

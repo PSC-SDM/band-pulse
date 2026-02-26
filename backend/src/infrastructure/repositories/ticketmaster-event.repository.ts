@@ -100,7 +100,8 @@ export class TicketmasterEventRepository implements IEventRepository {
 
     /**
      * Find events for a specific artist.
-     * Looks up the artist name from our DB, then queries Ticketmaster by keyword.
+     * First attempts to resolve the artist to a Ticketmaster attraction ID for exact matching.
+     * Falls back to keyword search with attraction validation if resolution fails.
      */
     async findByArtist(artistId: string, upcoming: boolean = true): Promise<Event[]> {
         const cacheKey = `${artistId}:${upcoming}`;
@@ -117,14 +118,38 @@ export class TicketmasterEventRepository implements IEventRepository {
         }
 
         try {
+            // Try to resolve artist to Ticketmaster attraction ID for exact matching
+            const attractionEntry = await this.resolveAttractionId(artist.name);
+            
             const response = await ticketmasterClient.searchEventsByArtistName(artist.name, {
                 size: 50,
+                attractionId: attractionEntry.tmId || undefined,
             });
 
             const tmEvents = response._embedded?.events || [];
 
-            // Map and filter: only keep events that have a venue with coordinates
+            // Map and filter events
             let events = tmEvents
+                .filter((tmEvent) => {
+                    // If we used keyword search (no attraction ID), validate that the event
+                    // actually features this artist by checking _embedded.attractions
+                    if (!attractionEntry.tmId) {
+                        const eventAttractions = tmEvent._embedded?.attractions || [];
+                        const normalizedArtistName = artist.name.toLowerCase().trim();
+                        const hasMatchingArtist = eventAttractions.some(
+                            (a) => a.name.toLowerCase().trim() === normalizedArtistName
+                        );
+                        if (!hasMatchingArtist) {
+                            logger.debug('Filtering out event - artist not in attractions', {
+                                artistName: artist.name,
+                                eventName: tmEvent.name,
+                                eventAttractions: eventAttractions.map((a) => a.name),
+                            });
+                            return false;
+                        }
+                    }
+                    return true;
+                })
                 .map((tmEvent) => mapTmEventToDomain(tmEvent, artistId, artist.name))
                 .filter((e) => e.venue.location.coordinates[0] !== 0 || e.venue.location.coordinates[1] !== 0);
 
@@ -134,6 +159,15 @@ export class TicketmasterEventRepository implements IEventRepository {
             }
 
             events.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+            logger.info('Artist events fetched and filtered', {
+                artistId,
+                artistName: artist.name,
+                matchType: attractionEntry.tmId ? 'attractionId' : 'keyword',
+                tmAttractionId: attractionEntry.tmId,
+                rawEvents: tmEvents.length,
+                filteredEvents: events.length,
+            });
 
             // Update caches
             this.artistEventCache.set(cacheKey, events);

@@ -7,6 +7,7 @@ import { IEventRepository } from '../../domain/event/event.repository.interface'
 import { IEmailService } from '../../domain/shared/email.service.interface';
 import { INotificationService } from './notification.service.interface';
 import { logger } from '../../shared/utils/logger';
+import { isWithinRadius, GeoJSONPoint } from '../../shared/utils/geo';
 
 /**
  * NotificationService - Business logic for the notification system.
@@ -22,7 +23,7 @@ export class NotificationService implements INotificationService {
         private userRepository: IUserRepository,
         private eventRepository: IEventRepository,
         private emailService: IEmailService,
-    ) {}
+    ) { }
 
     /**
      * Detect new concerts for an artist and notify their followers.
@@ -49,7 +50,34 @@ export class NotificationService implements INotificationService {
                     const user = await this.userRepository.findById(userId);
                     if (!user?.notificationPreferences?.newConcerts) continue;
 
-                    // Prevent duplicate notifications for the same user + event
+                    if (!user.location || !user.radiusKm) {
+                        logger.debug('Skipping notification - user has no location configured', {
+                            userId,
+                            eventId,
+                        });
+                        continue;
+                    }
+
+                    const venueLocation = event.venue?.location as GeoJSONPoint | undefined;
+                    if (!venueLocation || !venueLocation.coordinates ||
+                        (venueLocation.coordinates[0] === 0 && venueLocation.coordinates[1] === 0)) {
+                        logger.debug('Skipping notification - event venue has no valid location', {
+                            userId,
+                            eventId,
+                            venueName: event.venue?.name,
+                        });
+                        continue;
+                    }
+
+                    if (!isWithinRadius(user.location as GeoJSONPoint, venueLocation, user.radiusKm)) {
+                        logger.debug('Skipping notification - event outside user radius', {
+                            userId,
+                            eventId,
+                            userRadiusKm: user.radiusKm,
+                        });
+                        continue;
+                    }
+
                     const alreadySent = await this.notificationRepository.existsForUserEvent(
                         userId,
                         eventId,
