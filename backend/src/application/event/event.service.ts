@@ -39,7 +39,7 @@ export class EventService {
      * 1. Read from MongoDB → return immediately (even if empty/stale)
      * 2. If stale/empty → trigger background refresh from Ticketmaster (fire-and-forget)
      */
-    async getArtistEvents(artistId: string): Promise<Event[]> {
+    async getArtistEvents(artistId: string, includeVip = false): Promise<Event[]> {
         const events = await this.mongoEventRepository.findByArtist(artistId, true);
 
         const isStale = events.length === 0 || this.hasStaleEvents(events);
@@ -51,7 +51,7 @@ export class EventService {
             );
         }
 
-        return events;
+        return this.deduplicateEvents(events, includeVip);
     }
 
     /**
@@ -61,7 +61,7 @@ export class EventService {
      * 1. Read from MongoDB → return immediately (even if empty/stale)
      * 2. For any followed artist with no fresh events, trigger a background refresh
      */
-    async getEventsNearUser(userId: string): Promise<Event[]> {
+    async getEventsNearUser(userId: string, includeVip = false): Promise<Event[]> {
         const user = await this.userRepository.findById(userId);
 
         if (!user || !user.location) {
@@ -80,7 +80,8 @@ export class EventService {
 
         this.triggerStaleArtistRefreshes(artistIds);
 
-        return this.mongoEventRepository.findNearLocation(longitude, latitude, radiusKm, artistIds);
+        const events = await this.mongoEventRepository.findNearLocation(longitude, latitude, radiusKm, artistIds);
+        return this.deduplicateEvents(events, includeVip);
     }
 
     /**
@@ -95,7 +96,8 @@ export class EventService {
         userId: string,
         longitude: number,
         latitude: number,
-        radiusKm: number
+        radiusKm: number,
+        includeVip = false
     ): Promise<Event[]> {
         const artistIds = await this.followRepository.getFollowedArtistIds(userId);
 
@@ -105,7 +107,8 @@ export class EventService {
 
         this.triggerStaleArtistRefreshes(artistIds);
 
-        return this.mongoEventRepository.findNearLocation(longitude, latitude, radiusKm, artistIds);
+        const events = await this.mongoEventRepository.findNearLocation(longitude, latitude, radiusKm, artistIds);
+        return this.deduplicateEvents(events, includeVip);
     }
 
     /**
@@ -113,8 +116,9 @@ export class EventService {
      * Queries Ticketmaster directly since this is a general discovery feature
      * and not tied to specific followed artists.
      */
-    async exploreEvents(longitude: number, latitude: number, radiusKm: number): Promise<Event[]> {
-        return this.ticketmasterRepository.findNearLocation(longitude, latitude, radiusKm);
+    async exploreEvents(longitude: number, latitude: number, radiusKm: number, includeVip = false): Promise<Event[]> {
+        const events = await this.ticketmasterRepository.findNearLocation(longitude, latitude, radiusKm);
+        return this.deduplicateEvents(events, includeVip);
     }
 
     /**
@@ -161,6 +165,37 @@ export class EventService {
     private hasStaleEvents(events: Event[]): boolean {
         const ttlMs = (env.EVENT_CACHE_TTL || 86400) * 1000;
         return events.some((e) => Date.now() - e.lastChecked.getTime() > ttlMs);
+    }
+
+    private isVipEvent(event: Event): boolean {
+        const title = (event.title || '').toLowerCase();
+        return /\b(vip|package|hospitality|meet.?greet|experience|bundle|presale|floor.?pkg)\b/.test(title);
+    }
+
+    private deduplicateEvents(events: Event[], includeVip: boolean): Event[] {
+        if (includeVip) return events;
+
+        const best = new Map<string, Event>();
+        for (const event of events) {
+            const day = new Date(event.date).toISOString().slice(0, 10);
+            const venueKey = `${event.venue.name}${event.venue.city}`
+                .toLowerCase()
+                .replace(/\W+/g, '');
+            const key = `${event.artistId}_${day}_${venueKey}`;
+
+            const current = best.get(key);
+            if (!current) {
+                best.set(key, event);
+            } else {
+                const isCurrentVip = this.isVipEvent(current);
+                const isNewVip = this.isVipEvent(event);
+                const prefer =
+                    (isCurrentVip && !isNewVip) ||
+                    (!isCurrentVip && !isNewVip && !!event.ticketUrl && !current.ticketUrl);
+                if (prefer) best.set(key, event);
+            }
+        }
+        return Array.from(best.values());
     }
 
     private async backgroundRefreshArtistEvents(artistId: string): Promise<void> {

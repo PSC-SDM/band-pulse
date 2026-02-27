@@ -21,6 +21,7 @@ export interface User {
         tourAnnouncements: boolean;
         concertReminders: boolean;
         daysBeforeConcert: number;
+        showVipEvents?: boolean;
     };
     createdAt: Date;
     updatedAt: Date;

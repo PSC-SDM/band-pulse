@@ -13,3 +13,7 @@ export const searchEventsQuerySchema = z.object({
     lat: z.string().transform(Number).pipe(z.number().min(-90).max(90)),
     radiusKm: z.string().transform(Number).pipe(z.number().min(1).max(5000)),
 });
+
+export const vipQuerySchema = z.object({
+    includeVip: z.string().optional().transform((v) => v === 'true'),
+});

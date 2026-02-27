@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import { EventService } from '../../../application/event/event.service';
 import { toEventResponse } from '../dtos/event.dto';
-import { artistIdParamSchema, searchEventsQuerySchema } from '../validators/event.validators';
+import { artistIdParamSchema, searchEventsQuerySchema, vipQuerySchema } from '../validators/event.validators';
 import { logger } from '../../../shared/utils/logger';
 
 /**
@@ -19,7 +19,8 @@ export class EventController {
      */
     getNearMe = async (req: AuthRequest, res: Response) => {
         try {
-            const events = await this.eventService.getEventsNearUser(req.user!.userId);
+            const { includeVip } = vipQuerySchema.parse(req.query);
+            const events = await this.eventService.getEventsNearUser(req.user!.userId, includeVip);
 
             res.json(events.map(toEventResponse));
         } catch (error) {
@@ -48,12 +49,14 @@ export class EventController {
             }
 
             const { lng, lat, radiusKm } = validation.data;
+            const { includeVip } = vipQuerySchema.parse(req.query);
 
             const events = await this.eventService.searchEvents(
                 req.user!.userId,
                 lng,
                 lat,
-                radiusKm
+                radiusKm,
+                includeVip
             );
 
             res.json(events.map(toEventResponse));
@@ -82,8 +85,9 @@ export class EventController {
             }
 
             const { lng, lat, radiusKm } = validation.data;
+            const { includeVip } = vipQuerySchema.parse(req.query);
 
-            const events = await this.eventService.exploreEvents(lng, lat, radiusKm);
+            const events = await this.eventService.exploreEvents(lng, lat, radiusKm, includeVip);
 
             res.json(events.map(toEventResponse));
         } catch (error) {
@@ -110,7 +114,8 @@ export class EventController {
                 });
             }
 
-            const events = await this.eventService.getArtistEvents(req.params.artistId);
+            const { includeVip } = vipQuerySchema.parse(req.query);
+            const events = await this.eventService.getArtistEvents(req.params.artistId, includeVip);
 
             res.json(events.map(toEventResponse));
         } catch (error) {

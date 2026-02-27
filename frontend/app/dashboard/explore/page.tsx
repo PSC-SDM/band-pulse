@@ -48,6 +48,9 @@ export default function ExplorePage() {
     const [userRadius, setUserRadius] = useState(50);
     const [profileLoaded, setProfileLoaded] = useState(false);
 
+    // VIP toggle — initialized from user profile's showVipEvents setting
+    const [includeVip, setIncludeVip] = useState(false);
+
     // Current map state
     const currentSearchRef = useRef<{ lat: number; lng: number; radius: number } | null>(null);
     const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,7 +63,7 @@ export default function ExplorePage() {
         }
     }, [status, router]);
 
-    // Fetch user profile to get initial position
+    // Fetch user profile to get initial position + VIP preference
     useEffect(() => {
         if (status !== 'authenticated') return;
 
@@ -78,6 +81,7 @@ export default function ExplorePage() {
                     } else {
                         setUserPosition([40.4168, -3.7038]);
                     }
+                    setIncludeVip(data?.notificationPreferences?.showVipEvents ?? false);
                 } else {
                     setUserPosition([40.4168, -3.7038]);
                 }
@@ -93,13 +97,13 @@ export default function ExplorePage() {
 
     // Fetch ALL events for given coordinates (no artist filter)
     const fetchEventsForLocation = useCallback(
-        async (lat: number, lng: number, radiusKm: number) => {
+        async (lat: number, lng: number, radiusKm: number, vip: boolean) => {
             if (!token) return;
             setIsFetching(true);
             setError(null);
 
             try {
-                const data = await exploreEvents(token, lng, lat, radiusKm);
+                const data = await exploreEvents(token, lng, lat, radiusKm, vip);
                 setEvents(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to load events');
@@ -114,8 +118,9 @@ export default function ExplorePage() {
     // Initial fetch
     useEffect(() => {
         if (!profileLoaded || !userPosition || !token) return;
-        fetchEventsForLocation(userPosition[0], userPosition[1], userRadius);
-    }, [profileLoaded, userPosition, token, userRadius, fetchEventsForLocation]);
+        fetchEventsForLocation(userPosition[0], userPosition[1], userRadius, includeVip);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [profileLoaded, userPosition, token, userRadius]);
 
     // Map interaction handler with debounce
     const handleLocationChange = useCallback(
@@ -132,11 +137,21 @@ export default function ExplorePage() {
             currentSearchRef.current = { lat, lng, radius };
 
             debounceTimerRef.current = setTimeout(() => {
-                fetchEventsForLocation(lat, lng, radius);
+                fetchEventsForLocation(lat, lng, radius, includeVip);
             }, 600);
         },
-        [fetchEventsForLocation]
+        [fetchEventsForLocation, includeVip]
     );
+
+    // Toggle VIP and immediately re-fetch
+    const handleVipToggle = () => {
+        const next = !includeVip;
+        setIncludeVip(next);
+        const current = currentSearchRef.current;
+        if (current) {
+            fetchEventsForLocation(current.lat, current.lng, current.radius, next);
+        }
+    };
 
     // Loading
     if (status === 'loading' || (isLoading && !profileLoaded)) {
@@ -157,7 +172,7 @@ export default function ExplorePage() {
                 {/* Back Navigation */}
                 <Link
                     href="/dashboard"
-                    className="inline-flex items-center gap-2 text-alabaster/60 hover:text-white 
+                    className="inline-flex items-center gap-2 text-alabaster/60 hover:text-white
                              font-body transition-colors mb-8 group
                              opacity-0 animate-fade-in"
                     style={{ animationFillMode: 'forwards' }}
@@ -271,13 +286,26 @@ export default function ExplorePage() {
                         className="opacity-0 animate-fade-up"
                         style={{ animationFillMode: 'forwards', animationDelay: '0.35s' }}
                     >
-                        <div className="flex items-center gap-6 mb-8 pb-4 border-b border-white/[0.06]">
+                        <div className="flex items-center gap-4 mb-8 pb-4 border-b border-white/[0.06]">
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 bg-orange rounded-full" />
                                 <span className="font-display text-[10px] tracking-[0.2em] text-alabaster/40 uppercase">
                                     {events.length} result{events.length !== 1 ? 's' : ''}
                                 </span>
                             </div>
+                            {/* VIP toggle */}
+                            <button
+                                onClick={handleVipToggle}
+                                className={`text-[10px] font-display uppercase tracking-wider px-3 py-1
+                                            border transition-colors duration-200 ${
+                                                includeVip
+                                                    ? 'border-orange/40 text-orange bg-orange/10'
+                                                    : 'border-white/10 text-alabaster/40 hover:border-orange/20 hover:text-alabaster/60'
+                                            }`}
+                                style={{ borderRadius: '8px' }}
+                            >
+                                VIP &amp; packages
+                            </button>
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

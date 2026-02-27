@@ -30,6 +30,7 @@ export interface NotificationPreferences {
     tourAnnouncements: boolean;
     concertReminders: boolean;
     daysBeforeConcert: number;
+    showVipEvents?: boolean;
 }
 
 // ============================================

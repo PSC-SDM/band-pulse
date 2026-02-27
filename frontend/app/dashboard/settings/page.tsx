@@ -110,6 +110,7 @@ const DEFAULT_PREFS: NotificationPreferences = {
     tourAnnouncements: true,
     concertReminders: true,
     daysBeforeConcert: 3,
+    showVipEvents: false,
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -231,6 +232,13 @@ export default function SettingsPage() {
                             description="Alert me when a followed artist announces a full tour"
                             enabled={prefs.tourAnnouncements}
                             onChange={(v) => update('tourAnnouncements', v)}
+                            disabled={isLoading}
+                        />
+                        <SettingRow
+                            label="VIP & packages"
+                            description="Show VIP packages and premium bundles alongside regular tickets"
+                            enabled={prefs.showVipEvents ?? false}
+                            onChange={(v) => update('showVipEvents', v)}
                             disabled={isLoading}
                         />
                     </div>

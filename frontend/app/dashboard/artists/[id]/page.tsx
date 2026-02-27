@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { getArtistById } from '@/lib/artists';
 import { getArtistEvents } from '@/lib/events';
@@ -36,6 +36,7 @@ export default function ArtistDetailPage() {
     const [events, setEvents] = useState<EventResponse[]>([]);
     const [eventsLoading, setEventsLoading] = useState(false);
     const [eventsView, setEventsView] = useState<'list' | 'map'>('list');
+    const [includeVip, setIncludeVip] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [targetEventId, setTargetEventId] = useState<string | null>(null);
@@ -72,22 +73,25 @@ export default function ArtistDetailPage() {
     }, [token, artistId]);
 
     // Fetch artist events
-    useEffect(() => {
-        if (!token || !artistId) return;
-
-        const fetchEvents = async () => {
+    const fetchEvents = useCallback(
+        async (vip: boolean) => {
+            if (!token || !artistId) return;
             setEventsLoading(true);
             try {
-                const data = await getArtistEvents(artistId, token);
+                const data = await getArtistEvents(artistId, token, vip);
                 setEvents(data);
             } catch {
                 // Silently fail - events are supplementary
             } finally {
                 setEventsLoading(false);
             }
-        };
+        },
+        [token, artistId]
+    );
 
-        fetchEvents();
+    useEffect(() => {
+        fetchEvents(includeVip);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token, artistId]);
 
     // Handle follow status change
@@ -452,30 +456,46 @@ export default function ArtistDetailPage() {
                             Upcoming Events
                         </h2>
 
-                        {events.length > 0 && (
-                            <div className="flex bg-prussian/60 border border-alabaster/10 rounded-lg p-0.5">
-                                <button
-                                    onClick={() => setEventsView('list')}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-display uppercase tracking-wider transition-all
-                                              ${eventsView === 'list'
-                                            ? 'bg-orange/10 text-orange border border-orange/20'
-                                            : 'text-alabaster/50 hover:text-white'
-                                        }`}
-                                >
-                                    List
-                                </button>
-                                <button
-                                    onClick={() => setEventsView('map')}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-display uppercase tracking-wider transition-all
-                                              ${eventsView === 'map'
-                                            ? 'bg-orange/10 text-orange border border-orange/20'
-                                            : 'text-alabaster/50 hover:text-white'
-                                        }`}
-                                >
-                                    Map
-                                </button>
-                            </div>
-                        )}
+                        <div className="flex items-center gap-2">
+                            {/* VIP toggle */}
+                            <button
+                                onClick={() => { const next = !includeVip; setIncludeVip(next); fetchEvents(next); }}
+                                className={`text-[10px] font-display uppercase tracking-wider px-3 py-1
+                                            border transition-colors duration-200 ${
+                                                includeVip
+                                                    ? 'border-orange/40 text-orange bg-orange/10'
+                                                    : 'border-white/10 text-alabaster/40 hover:border-orange/20 hover:text-alabaster/60'
+                                            }`}
+                                style={{ borderRadius: '8px' }}
+                            >
+                                VIP &amp; packages
+                            </button>
+
+                            {events.length > 0 && (
+                                <div className="flex bg-prussian/60 border border-alabaster/10 rounded-lg p-0.5">
+                                    <button
+                                        onClick={() => setEventsView('list')}
+                                        className={`px-3 py-1.5 rounded-md text-xs font-display uppercase tracking-wider transition-all
+                                                  ${eventsView === 'list'
+                                                ? 'bg-orange/10 text-orange border border-orange/20'
+                                                : 'text-alabaster/50 hover:text-white'
+                                            }`}
+                                    >
+                                        List
+                                    </button>
+                                    <button
+                                        onClick={() => setEventsView('map')}
+                                        className={`px-3 py-1.5 rounded-md text-xs font-display uppercase tracking-wider transition-all
+                                                  ${eventsView === 'map'
+                                                ? 'bg-orange/10 text-orange border border-orange/20'
+                                                : 'text-alabaster/50 hover:text-white'
+                                            }`}
+                                    >
+                                        Map
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {eventsLoading && (

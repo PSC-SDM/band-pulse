@@ -11,6 +11,7 @@ export const updateNotificationPreferencesSchema = z.object({
     tourAnnouncements: z.boolean().optional(),
     concertReminders: z.boolean().optional(),
     daysBeforeConcert: z.number().int().min(1).max(30).optional(),
+    showVipEvents: z.boolean().optional(),
 }).refine((data) => Object.keys(data).length > 0, {
     message: 'At least one preference field must be provided',
 });

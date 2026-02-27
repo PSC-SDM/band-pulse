@@ -42,8 +42,9 @@ async function fetchWithAuth<T>(
  * Get events near the authenticated user's location.
  * Filtered by followed artists.
  */
-export async function getEventsNearMe(token: string): Promise<EventResponse[]> {
-    return fetchWithAuth<EventResponse[]>('/events/near-me', token);
+export async function getEventsNearMe(token: string, includeVip = false): Promise<EventResponse[]> {
+    const vip = includeVip ? '?includeVip=true' : '';
+    return fetchWithAuth<EventResponse[]>(`/events/near-me${vip}`, token);
 }
 
 /**
@@ -54,10 +55,12 @@ export async function searchEvents(
     token: string,
     lng: number,
     lat: number,
-    radiusKm: number
+    radiusKm: number,
+    includeVip = false
 ): Promise<EventResponse[]> {
+    const vip = includeVip ? '&includeVip=true' : '';
     return fetchWithAuth<EventResponse[]>(
-        `/events/search?lng=${lng}&lat=${lat}&radiusKm=${radiusKm}`,
+        `/events/search?lng=${lng}&lat=${lat}&radiusKm=${radiusKm}${vip}`,
         token
     );
 }
@@ -69,10 +72,12 @@ export async function exploreEvents(
     token: string,
     lng: number,
     lat: number,
-    radiusKm: number
+    radiusKm: number,
+    includeVip = false
 ): Promise<EventResponse[]> {
+    const vip = includeVip ? '&includeVip=true' : '';
     return fetchWithAuth<EventResponse[]>(
-        `/events/explore?lng=${lng}&lat=${lat}&radiusKm=${radiusKm}`,
+        `/events/explore?lng=${lng}&lat=${lat}&radiusKm=${radiusKm}${vip}`,
         token
     );
 }
@@ -82,7 +87,9 @@ export async function exploreEvents(
  */
 export async function getArtistEvents(
     artistId: string,
-    token: string
+    token: string,
+    includeVip = false
 ): Promise<EventResponse[]> {
-    return fetchWithAuth<EventResponse[]>(`/events/artist/${artistId}`, token);
+    const vip = includeVip ? '?includeVip=true' : '';
+    return fetchWithAuth<EventResponse[]>(`/events/artist/${artistId}${vip}`, token);
 }
