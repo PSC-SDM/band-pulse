@@ -108,10 +108,11 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full px-4 py-3 bg-prussian/50 text-white border-l-2 border-alabaster/20 
-                                         focus:border-orange focus:bg-prussian focus:outline-none font-body
-                                         transition-all duration-300"
-                                style={{ borderRadius: '20px' }}
+                                className="w-full px-4 py-3 bg-prussian/50 text-white rounded-[20px]
+                                         border border-alabaster/20 
+                                         focus:border-orange/50 focus:ring-2 focus:ring-orange/20 
+                                         focus:bg-prussian focus:outline-none font-body
+                                         transition-all duration-200"
                                 placeholder="your@email.com"
                             />
                         </div>
@@ -126,17 +127,17 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="w-full px-4 py-3 bg-prussian/50 text-white border-l-2 border-alabaster/20 
-                                         focus:border-orange focus:bg-prussian focus:outline-none font-body
-                                         transition-all duration-300"
-                                style={{ borderRadius: '20px' }}
+                                className="w-full px-4 py-3 bg-prussian/50 text-white rounded-[20px]
+                                         border border-alabaster/20 
+                                         focus:border-orange/50 focus:ring-2 focus:ring-orange/20 
+                                         focus:bg-prussian focus:outline-none font-body
+                                         transition-all duration-200"
                                 placeholder="••••••••"
                             />
                         </div>
 
                         {error && (
-                            <div className="flex items-center gap-3 p-4 bg-orange/10 border-l-2 border-orange"
-                                style={{ borderRadius: '16px' }}>
+                            <div className="flex items-center gap-3 p-4 bg-orange/10 border border-orange/30 rounded-[16px]">
                                 <svg className="w-5 h-5 text-orange flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>

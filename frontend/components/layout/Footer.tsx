@@ -14,13 +14,8 @@ export default function Footer() {
     if (hideOnRoutes.includes(pathname)) return null;
 
     return (
-        <footer className="relative py-12 bg-prussian border-t border-prussian-light/30 overflow-hidden">
-            {/* Background accent */}
-            <div className="absolute inset-0 opacity-30">
-                <div className="absolute -bottom-20 -right-20 w-60 h-60 bg-night/50 rounded-full blur-3xl" />
-            </div>
-
-            <div className="relative max-w-7xl mx-auto px-6">
+        <footer className="relative py-12 bg-prussian border-t border-prussian-light/30">
+            <div className="max-w-7xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                     {/* Logo and tagline */}
                     <div className="flex flex-col gap-3">

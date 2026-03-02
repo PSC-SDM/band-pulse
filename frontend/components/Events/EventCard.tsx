@@ -42,14 +42,13 @@ export default function EventCard({ event, id, highlighted = false }: EventCardP
         <div
             id={id}
             className={`group relative transition-all duration-300 ${highlighted
-                    ? 'ring-2 ring-orange shadow-[0_0_24px_rgba(252,163,17,0.35)]'
-                    : ''
+                ? 'ring-2 ring-orange shadow-[0_0_24px_rgba(252,163,17,0.35)]'
+                : ''
                 }`}
             style={{ borderRadius: '28px' }}
         >
             <div className={`relative overflow-hidden bg-prussian border backdrop-blur-sm
-                            hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
-                            transition-all duration-300
+                            transition-colors duration-200
                             ${isSoldOut
                     ? 'border-red-600/30 hover:border-red-500/50'
                     : 'border-white/[0.04] hover:border-white/20'
@@ -59,12 +58,6 @@ export default function EventCard({ event, id, highlighted = false }: EventCardP
                 {/* Depth overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"
                     style={{ borderRadius: '28px' }} />
-
-                {/* Hover background accent */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                    <div className={`absolute -right-16 -top-16 w-32 h-32 rotate-45 ${isSoldOut ? 'bg-red-500/5' : 'bg-orange/5'
-                        }`} />
-                </div>
 
                 <div className="relative p-6">
                     {/* Sold out / Few left badges */}
@@ -91,8 +84,8 @@ export default function EventCard({ event, id, highlighted = false }: EventCardP
                         {/* Date badge */}
                         <div className="flex-shrink-0 w-16 text-center">
                             <div className={`p-2 border ${isSoldOut
-                                    ? 'bg-red-600/10 border-red-500/20'
-                                    : 'bg-orange/10 border-orange/20'
+                                ? 'bg-red-600/10 border-red-500/20'
+                                : 'bg-orange/10 border-orange/20'
                                 }`}
                                 style={{ borderRadius: '14px' }}>
                                 <div className={`text-2xl font-accent leading-none ${isSoldOut ? 'text-red-400' : 'text-orange'
@@ -156,10 +149,10 @@ export default function EventCard({ event, id, highlighted = false }: EventCardP
                                 rel="noopener noreferrer"
                                 className={`inline-flex items-center gap-2 px-4 py-2
                                      text-sm font-display uppercase tracking-wider
-                                     border transition-all duration-300
+                                     border transition-colors duration-200
                                      ${isSoldOut
                                         ? 'bg-red-600/10 text-red-400 border-red-500/20 hover:bg-red-600/20 hover:border-red-500/40'
-                                        : 'bg-orange/10 text-orange border-orange/20 hover:bg-orange hover:text-night hover:scale-105'
+                                        : 'bg-orange/10 text-orange border-orange/20 hover:bg-orange hover:text-night'
                                     }`}
                                 style={{ borderRadius: '12px' }}
                             >
@@ -172,10 +165,6 @@ export default function EventCard({ event, id, highlighted = false }: EventCardP
                         </div>
                     )}
                 </div>
-
-                {/* Bottom accent line on hover */}
-                <div className={`absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-700
-                           ${isSoldOut ? 'bg-red-500' : 'bg-orange'}`} />
             </div>
         </div>
     );

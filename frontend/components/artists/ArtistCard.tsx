@@ -56,9 +56,8 @@ export default function ArtistCard({
             <Link
                 href={`/dashboard/artists/${artist.id}`}
                 className="block relative bg-prussian border border-white/[0.04]
-                           hover:border-white/20 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40
-                           transition-all duration-300 ease-out overflow-hidden
-                           before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/[0.02] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity"
+                           hover:border-white/20
+                           transition-colors duration-200 overflow-hidden"
                 style={{
                     borderRadius: '28px',
                 }}
@@ -70,10 +69,10 @@ export default function ArtistCard({
                             <img
                                 src={artist.imageUrl}
                                 alt={artist.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                                className="w-full h-full object-cover"
                             />
                             {/* Gradient overlay for text legibility */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-prussian/90 via-prussian/20 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-prussian/80 via-transparent to-transparent" />
                         </>
                     ) : (
                         <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-prussian-light to-prussian-dark">
