@@ -75,7 +75,7 @@ export default function YourPulsePage() {
 
         async function fetchUserProfile() {
             try {
-                const response = await fetch('/api/user/me');
+                const response = await fetch('/bff/user/me');
                 if (response.ok) {
                     const data = await response.json();
                     if (data?.location?.coordinates) {
@@ -168,7 +168,7 @@ export default function YourPulsePage() {
         setSaveMessage('');
 
         try {
-            const response = await fetch('/api/user/location', {
+            const response = await fetch('/bff/user/location', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

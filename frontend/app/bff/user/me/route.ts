@@ -1,10 +1,10 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { NextRequest, NextResponse } from 'next/server';
+import { authOptions } from '@/app/bff/auth/[...nextauth]/route';
+import { NextResponse } from 'next/server';
 
 const API_URL = process.env.API_URL_INTERNAL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
-export async function PATCH(request: NextRequest) {
+export async function GET() {
     const session = await getServerSession(authOptions);
 
     if (!session || !(session as any).accessToken) {
@@ -12,15 +12,10 @@ export async function PATCH(request: NextRequest) {
     }
 
     try {
-        const body = await request.json();
-
-        const response = await fetch(`${API_URL}/users/me/location`, {
-            method: 'PATCH',
+        const response = await fetch(`${API_URL}/users/me`, {
             headers: {
-                'Content-Type': 'application/json',
                 Authorization: `Bearer ${(session as any).accessToken}`,
             },
-            body: JSON.stringify(body),
         });
 
         const data = await response.json();

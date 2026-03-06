@@ -69,7 +69,7 @@ export default function ExplorePage() {
 
         async function fetchUserProfile() {
             try {
-                const response = await fetch('/api/user/me');
+                const response = await fetch('/bff/user/me');
                 if (response.ok) {
                     const data = await response.json();
                     if (data?.location?.coordinates) {

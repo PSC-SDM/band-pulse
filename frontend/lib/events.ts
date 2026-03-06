@@ -25,7 +25,7 @@ async function fetchWithAuth<T>(
     if (response.status === 401) {
         // Token expired or invalid — sign out and redirect to login
         if (typeof window !== 'undefined') {
-            window.location.href = '/api/auth/signout?callbackUrl=' + encodeURIComponent('/login');
+            window.location.href = '/bff/auth/signout?callbackUrl=' + encodeURIComponent('/login');
         }
         throw new Error('Session expired. Please log in again.');
     }

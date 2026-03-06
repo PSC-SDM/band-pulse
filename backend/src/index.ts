@@ -128,7 +128,7 @@ if (env.NODE_ENV === 'development') {
 }
 
 // Health check endpoint
-app.get('/health', async (_req: Request, res: Response) => {
+app.get('/api/health', async (_req: Request, res: Response) => {
     try {
         const db = getDatabase();
         await db.admin().ping();

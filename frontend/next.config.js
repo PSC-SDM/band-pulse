@@ -19,9 +19,9 @@ const nextConfig = {
     async rewrites() {
         const apiUrl = process.env.API_URL_INTERNAL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
         return {
-            // fallback: solo se aplica si ninguna ruta de Next.js (API routes, pages) coincide.
-            // Esto evita que intercepte /api/auth/* (NextAuth) y /api/user/* (nuestras API routes).
-            fallback: [
+            // Las rutas BFF (/bff/*) las maneja Next.js directamente (auth, user proxy).
+            // Todo /api/* se redirige al backend.
+            beforeFiles: [
                 {
                     source: '/api/:path*',
                     destination: `${apiUrl}/:path*`,
